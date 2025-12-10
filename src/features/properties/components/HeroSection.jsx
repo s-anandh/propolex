@@ -1,11 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Home, DollarSign, BedDouble, ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import heroBg from '@/assets/hero-bg.png';
 
 const HeroSection = () => {
+    const [text, setText] = useState('');
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [loopNum, setLoopNum] = useState(0);
+    const [typingSpeed, setTypingSpeed] = useState(150);
+
+    const words = ["Home", "Apartment", "Villa", "Estate", "Sanctuary"];
+
+    useEffect(() => {
+        const handleTyping = () => {
+            const i = loopNum % words.length;
+            const fullText = words[i];
+
+            setText(isDeleting
+                ? fullText.substring(0, text.length - 1)
+                : fullText.substring(0, text.length + 1)
+            );
+
+            setTypingSpeed(isDeleting ? 50 : 150);
+
+            if (!isDeleting && text === fullText) {
+                setTimeout(() => setIsDeleting(true), 1500); // Pause before deleting
+            } else if (isDeleting && text === '') {
+                setIsDeleting(false);
+                setLoopNum(loopNum + 1);
+            }
+        };
+
+        const timer = setTimeout(handleTyping, typingSpeed);
+        return () => clearTimeout(timer);
+    }, [text, isDeleting, loopNum, typingSpeed]); // Added all dependencies
+
     return (
-        <div className="relative h-[600px] w-full flex items-end pb-12 sm:pb-20">
+        <div className="relative h-[600px] w-full flex items-end pb-12 sm:pb-20 rounded-b-[80px] overflow-hidden">
             {/* Background Image with Gradient Overlay */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -22,7 +53,8 @@ const HeroSection = () => {
                     {/* Main Heading */}
                     <div className="space-y-2 mb-8 animate-fade-in-up">
                         <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight">
-                            Discover Your New Home
+                            Discover Your New <span className="text-primary-400">{text}</span>
+                            <span className="animate-pulse">|</span>
                         </h1>
                         <p className="text-lg md:text-xl text-slate-200 font-light">
                             We have the most listings and constant updates. So you never miss out.

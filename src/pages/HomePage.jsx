@@ -1,6 +1,7 @@
 import React from 'react';
 import HeroSection from '@/features/properties/components/HeroSection';
 import CategorySection from '@/features/properties/components/CategorySection';
+import BoostedProperties from '@/features/properties/components/BoostedProperties';
 import VendorSection from '@/features/vendors/components/VendorSection';
 
 const HomePage = () => {
@@ -12,18 +13,8 @@ const HomePage = () => {
             {/* 2. Property Categories (Houses, Villas, etc.) */}
             <CategorySection />
 
-            {/* 3. Boosted Listings Placeholder (Carousel) */}
-            <div className="py-12 bg-white border-y border-slate-100 overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="flex items-center gap-2 mb-6">
-                        <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">PREMIUM</span>
-                        <h3 className="text-xl font-bold text-slate-900">Boosted Properties</h3>
-                    </div>
-                    <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl h-64 flex items-center justify-center text-slate-400 font-medium">
-                        Boosted Listings Carousel Module (Coming Soon)
-                    </div>
-                </div>
-            </div>
+            {/* 3. Boosted Listings (Carousel) */}
+            <BoostedProperties />
 
             {/* 4. Vendor Categories (Multivendor) */}
             <VendorSection />
