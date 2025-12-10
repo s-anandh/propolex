@@ -31,11 +31,11 @@ const Navbar = () => {
         { name: 'About', href: '/about' },
     ];
 
-    // Dynamic Classes
+
     const isTransparent = isHome && !isScrolled;
 
     const navClasses = isTransparent
-        ? 'fixed top-0 w-full z-50 bg-black/30 backdrop-blur-sm border-b border-white/10 transition-all duration-500 ease-in-out'
+        ? 'fixed top-0 w-full z-50 bg-black/10 backdrop-blur-sm border-b border-white/10 transition-all duration-500 ease-in-out'
         : 'sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-all duration-500 ease-in-out shadow-sm';
 
     const textClasses = isTransparent
@@ -78,11 +78,12 @@ const Navbar = () => {
                     <div className="hidden md:flex items-center gap-4">
                         <Button
                             variant="ghost"
-                            className="font-semibold text-slate-700 hover:bg-white/50"
+                            className={`font-semibold text-slate-700 hover:bg-white/50 ${textClasses}`}
                         >
                             Login
                         </Button>
-                        <Button className="gap-2 shadow-lg shadow-primary-600/20">
+                        <Button className={`gap-2 shadow-lg shadow-primary-600/20 `}
+                        >
                             <Plus size={18} />
                             Post Property
                         </Button>
