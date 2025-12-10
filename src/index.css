@@ -5,5 +5,44 @@
 @layer base {
   body {
     @apply antialiased text-slate-900 bg-white;
+    /* Custom Cursor - Styled Arrow (Standard Shape, Violet Theme) */
+    /* Default: Violet-600 Fill */
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%237c3aed" stroke="white" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>') 0 0, auto;
   }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-violet-400 rounded-full border-2 border-slate-100;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-violet-600;
+  }
+
+  /* Firefox */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #7c3aed #f1f5f9;
+  }
+}
+
+/* Pointer Cursor - SAME Arrow Shape, Darker Color */
+/* Hover: Violet-900 Fill (#4c1d95) to indicate interaction */
+a,
+button,
+[role="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+label {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%234c1d95" stroke="white" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>') 0 0, pointer;
 }
