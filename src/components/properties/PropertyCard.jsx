@@ -144,12 +144,12 @@ const PropertyCard = ({ property }) => {
 
                             {/* Price & Valuation */}
                             <div className="flex flex-col gap-1 mb-3">
-                                <p className="text-2xl font-bold text-violet-600">${price.toLocaleString()}</p>
+                                <p className="text-2xl font-bold text-violet-600">₹{price.toLocaleString()}</p>
 
                                 {valuation && (
                                     <div className="flex items-center gap-3">
                                         <span className="text-sm text-slate-400 line-through decoration-slate-400 decoration-2">
-                                            ${valuation.toLocaleString()}
+                                            ₹{valuation.toLocaleString()}
                                         </span>
                                         <button className="flex items-center gap-1.5 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors text-xs px-2.5 py-1 rounded-full font-semibold border border-violet-100">
                                             <Sparkles size={12} />

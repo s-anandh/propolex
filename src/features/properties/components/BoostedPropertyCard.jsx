@@ -144,7 +144,7 @@ const BoostedPropertyCard = ({ property }) => {
 
                             {/* Price & Valuation */}
                             <div className="flex flex-col gap-0.5 mb-1">
-                                <p className="text-lg font-bold text-violet-600">${price.toLocaleString()}</p>
+                                <p className="text-lg font-bold text-violet-600">₹{price.toLocaleString()}</p>
 
                             </div>
                         </div>
