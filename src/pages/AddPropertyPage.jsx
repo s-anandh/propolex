@@ -77,7 +77,29 @@ const AddPropertyPage = () => {
         }
     };
 
+    const validateStep = (step) => {
+        switch (step) {
+            case 0: // Basic Info
+                return formData.title && formData.category && formData.subCategory &&
+                    formData.listingType && formData.expectedPrice &&
+                    formData.firstName && formData.lastName &&
+                    formData.phone && formData.email;
+            case 1: // Details & Address
+                return formData.addressLine1 && formData.city &&
+                    formData.state && formData.pincode;
+            case 2: // Media
+                // Require at least 1 image
+                return formData.images && formData.images.length > 0;
+            default:
+                return true;
+        }
+    };
+
     const nextStep = () => {
+        if (!validateStep(currentStep)) {
+            alert("Please fill in all required fields before proceeding.");
+            return;
+        }
         if (currentStep < steps.length - 1) {
             setDirection('forward');
             setCurrentStep(prev => prev + 1);
@@ -87,7 +109,7 @@ const AddPropertyPage = () => {
 
     const prevStep = () => {
         if (currentStep > 0) {
-            setDirection('backward'); // Animation slides IN from Left (content moves right visually)
+            setDirection('backward');
             setCurrentStep(prev => prev - 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -95,8 +117,13 @@ const AddPropertyPage = () => {
 
     // Jump to step
     const goToStep = (stepIndex) => {
-        if (stepIndex === currentStep) return;
-        setDirection(stepIndex > currentStep ? 'forward' : 'backward');
+        // Only allow going back or staying on current
+        // To go forward, one must use the Next button (which validates)
+        // OR we can check if all intermediate steps are valid? 
+        // Simpler: Only allow clicking previous steps.
+        if (stepIndex >= currentStep) return;
+
+        setDirection('backward');
         setCurrentStep(stepIndex);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
