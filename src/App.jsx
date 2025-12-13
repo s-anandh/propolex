@@ -5,6 +5,8 @@ import Footer from '@/components/layout/Footer';
 import HomePage from '@/pages/HomePage';
 import PropertiesPage from '@/pages/PropertiesPage';
 
+import AddPropertyPage from '@/pages/AddPropertyPage';
+
 function App() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -13,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/properties" element={<PropertiesPage />} />
+          <Route path="/add-property" element={<AddPropertyPage />} />
         </Routes>
       </div>
       <Footer />

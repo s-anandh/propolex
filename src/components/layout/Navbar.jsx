@@ -82,11 +82,13 @@ const Navbar = () => {
                         >
                             Login
                         </Button>
-                        <Button className={`gap-2 shadow-lg shadow-primary-600/20 `}
-                        >
-                            <Plus size={18} />
-                            Post Property
-                        </Button>
+                        <Link to="/add-property">
+                            <Button className={`gap-2 shadow-lg shadow-primary-600/20 `}
+                            >
+                                <Plus size={18} />
+                                Post Property
+                            </Button>
+                        </Link>
                     </div>
 
                     {/* Mobile Menu Button */}
