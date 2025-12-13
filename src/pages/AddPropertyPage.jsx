@@ -101,16 +101,25 @@ const AddPropertyPage = () => {
         }
 
         if (step === 1) {
+            // Property Details validation
+            if (!formData.builtUpArea && !formData.plotArea) {
+                newErrors.builtUpArea = "Either Built-up Area or Plot Area is required";
+                newErrors.plotArea = "Either Built-up Area or Plot Area is required";
+            }
+            if (!formData.bedrooms) newErrors.bedrooms = "Bedrooms is required";
+            if (!formData.bathrooms) newErrors.bathrooms = "Bathrooms is required";
+
+            // Address validation
             if (!formData.addressLine1) newErrors.addressLine1 = "Address Line 1 is required";
             if (!formData.city) newErrors.city = "City is required";
             if (!formData.state) newErrors.state = "State is required";
             if (!formData.pincode) newErrors.pincode = "Pincode is required";
         }
 
+
         if (step === 2) {
             if (!formData.images || formData.images.length === 0) {
-                showNotification('error', 'Please upload at least one property image.');
-                return false;
+                newErrors.images = "At least one property image is required";
             }
         }
 
@@ -139,6 +148,7 @@ const AddPropertyPage = () => {
         if (currentStep > 0) {
             setDirection('backward');
             setCurrentStep(prev => prev - 1);
+            setErrors({}); // Clear errors when going back
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
@@ -152,6 +162,7 @@ const AddPropertyPage = () => {
 
         setDirection(stepIndex > currentStep ? 'forward' : 'backward');
         setCurrentStep(stepIndex);
+        setErrors({}); // Clear errors when jumping to a step
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -221,7 +232,7 @@ const AddPropertyPage = () => {
                     <div key={currentStep} className={direction === 'forward' ? 'animate-slide-right' : 'animate-slide-left'}>
                         {currentStep === 0 && <Step1BasicInfo formData={formData} handleChange={handleChange} errors={errors} />}
                         {currentStep === 1 && <Step2PropertyDetails formData={formData} handleChange={handleChange} handleArrayChange={handleArrayChange} errors={errors} />}
-                        {currentStep === 2 && <Step3Media formData={formData} handleFileChange={handleFileChange} removeFile={removeFile} />}
+                        {currentStep === 2 && <Step3Media formData={formData} handleFileChange={handleFileChange} removeFile={removeFile} errors={errors} />}
                         {currentStep === 3 && <Step4Preview formData={formData} onEditStep={goToStep} />}
                     </div>
                 </div>

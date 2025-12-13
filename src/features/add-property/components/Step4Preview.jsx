@@ -47,11 +47,6 @@ const Step4Preview = ({ formData, onEditStep }) => {
 
     return (
         <div className="animate-fade-in-up space-y-8">
-            {/* Header */}
-            <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold text-slate-800">Review Your Listing</h2>
-                <p className="text-slate-500">Check how your property will appear to potential buyers</p>
-            </div>
 
             {/* Property Card Preview - Full Width */}
             <div className="bg-gradient-to-br from-violet-50 to-blue-50 p-6 rounded-2xl border border-violet-100">

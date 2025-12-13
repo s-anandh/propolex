@@ -2,34 +2,34 @@ import React, { useState } from 'react';
 import { Home, MapPin, Plus, X } from 'lucide-react';
 
 const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", required = false, suffix, error }) => (
-    <div className="space-y-1.5">
+    <div className={`space-y-1.5 ${error ? 'mb-5 ' : ''}`}>
         <label className="text-sm font-semibold text-slate-700">
             {label} {required && <span className="text-red-500">*</span>}
         </label>
-        <div className="relative">
+        <div className="relative rounded-lg">
             <input
                 type={type}
                 name={name}
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className={`w-full px-4 py-2.5 rounded-lg border focus:ring-2 outline-none transition-all placeholder:text-slate-400 text-slate-700 bg-white ${suffix ? 'pr-12' : ''}
+                className={`w-full px-4 py-2.5 rounded-lg border focus:ring-2 outline-none transition-all placeholder:text-slate-400 text-slate-700 bg-white ${suffix ? 'pr-20' : ''}
                     ${error
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
                         : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
             />
             {suffix && (
-                <div className="absolute inset-y-0 right-0 px-3 flex items-center bg-slate-50 border-l border-slate-200 rounded-r-lg text-slate-500 text-sm font-medium">
+                <div className="absolute inset-y-0.5 right-0.5 px-3 flex items-center bg-slate-50 border-l border-slate-200 rounded-r-lg text-slate-500 text-sm font-medium pointer-events-none">
                     {suffix}
                 </div>
             )}
-            {/* Inline Error Message */}
-            {error && (
-                <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down absolute -bottom-5 left-0">
-                    {error}
-                </p>
-            )}
         </div>
+        {/* Inline Error Message - Outside relative container */}
+        {error && (
+            <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down">
+                {error}
+            </p>
+        )}
     </div>
 );
 
@@ -119,6 +119,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, error
                             placeholder="1200"
                             suffix="Sq.ft"
                             type="number"
+                            error={errors.plotArea}
                         />
                         <InputGroup
                             label="Built-up Area"
@@ -128,6 +129,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, error
                             placeholder="2400"
                             suffix="Sq.ft"
                             type="number"
+                            error={errors.builtUpArea}
                         />
                     </div>
 
@@ -138,6 +140,8 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, error
                             value={formData.bedrooms}
                             onChange={handleChange}
                             options={['1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK']}
+                            required
+                            error={errors.bedrooms}
                         />
                         <SelectGroup
                             label="Bathrooms"
@@ -145,6 +149,8 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, error
                             value={formData.bathrooms}
                             onChange={handleChange}
                             options={['1', '2', '3', '4', '5+']}
+                            required
+                            error={errors.bathrooms}
                         />
                     </div>
 

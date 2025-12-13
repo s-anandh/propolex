@@ -1,10 +1,13 @@
 import React from 'react';
 import { Upload, Image as ImageIcon, FileText, Trash2 } from 'lucide-react';
 
-const FileUploadZone = ({ label, accept, multiple, onChange, icon: Icon, helpText }) => (
+const FileUploadZone = ({ label, accept, multiple, onChange, icon: Icon, helpText, required = false, error }) => (
     <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-700">{label}</label>
-        <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-8 hover:bg-slate-50 transition-colors text-center cursor-pointer group">
+        <label className="text-sm font-semibold text-slate-700">
+            {label} {required && <span className="text-red-500">*</span>}
+        </label>
+        <div className={`relative border-2 border-dashed rounded-xl p-8 hover:bg-slate-50 transition-colors text-center cursor-pointer group ${error ? 'border-red-300 bg-red-50/50' : 'border-slate-300'
+            }`}>
             <input
                 type="file"
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -13,7 +16,8 @@ const FileUploadZone = ({ label, accept, multiple, onChange, icon: Icon, helpTex
                 onChange={onChange}
             />
             <div className="flex flex-col items-center gap-3">
-                <div className="p-3 bg-violet-50 text-violet-600 rounded-full group-hover:scale-110 transition-transform">
+                <div className={`p-3 rounded-full group-hover:scale-110 transition-transform ${error ? 'bg-red-50 text-red-600' : 'bg-violet-50 text-violet-600'
+                    }`}>
                     <Icon size={24} />
                 </div>
                 <div>
@@ -22,6 +26,12 @@ const FileUploadZone = ({ label, accept, multiple, onChange, icon: Icon, helpTex
                 </div>
             </div>
         </div>
+        {/* Inline Error Message */}
+        {error && (
+            <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down flex items-center gap-1">
+                <span>⚠️</span> {error}
+            </p>
+        )}
     </div>
 );
 
@@ -53,7 +63,7 @@ const FileList = ({ files, onRemove }) => {
     );
 };
 
-const Step3Media = ({ formData, handleFileChange, removeFile }) => {
+const Step3Media = ({ formData, handleFileChange, removeFile, errors = {} }) => {
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-fade-in-up">
 
@@ -76,6 +86,8 @@ const Step3Media = ({ formData, handleFileChange, removeFile }) => {
                     icon={Upload}
                     helpText="SVG, PNG, JPG or GIF (max. 5MB per file)"
                     onChange={(e) => handleFileChange(e, 'images')}
+                    required
+                    error={errors.images}
                 />
 
                 <FileList files={formData.images} onRemove={(index) => removeFile('images', index)} />
