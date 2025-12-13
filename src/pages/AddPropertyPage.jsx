@@ -7,6 +7,7 @@ import Step4Preview from '@/features/add-property/components/Step4Preview';
 
 const AddPropertyPage = () => {
     const [currentStep, setCurrentStep] = useState(0);
+    const [direction, setDirection] = useState('forward');
     const [formData, setFormData] = useState({
         // Step 1
         title: '',
@@ -78,6 +79,7 @@ const AddPropertyPage = () => {
 
     const nextStep = () => {
         if (currentStep < steps.length - 1) {
+            setDirection('forward');
             setCurrentStep(prev => prev + 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -85,13 +87,16 @@ const AddPropertyPage = () => {
 
     const prevStep = () => {
         if (currentStep > 0) {
+            setDirection('backward'); // Animation slides IN from Left (content moves right visually)
             setCurrentStep(prev => prev - 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
-    // Jump to step from preview
+    // Jump to step
     const goToStep = (stepIndex) => {
+        if (stepIndex === currentStep) return;
+        setDirection(stepIndex > currentStep ? 'forward' : 'backward');
         setCurrentStep(stepIndex);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -107,39 +112,56 @@ const AddPropertyPage = () => {
                 </div>
 
                 {/* Stepper Progress */}
-                <div className="mb-12 relative">
-                    <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -z-0 transform -translate-y-1/2 rounded-full"></div>
-                    <div className="absolute top-1/2 left-0 h-1 bg-violet-600 -z-0 transform -translate-y-1/2 rounded-full transition-all duration-500"
-                        style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}></div>
-
-                    <div className="flex justify-between relative z-10">
+                <div className="mb-12">
+                    <div className="flex items-center justify-between w-full">
                         {steps.map((step, index) => {
                             const isCompleted = index < currentStep;
                             const isActive = index === currentStep;
 
                             return (
-                                <div key={step.id} className="flex flex-col items-center">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-4 
-                                        ${isActive ? 'bg-violet-600 text-white border-violet-200' :
-                                            isCompleted ? 'bg-violet-600 text-white border-violet-600' :
-                                                'bg-white text-slate-500 border-slate-200'}`}>
-                                        {isCompleted ? <Check size={20} /> : index + 1}
+                                <React.Fragment key={step.id}>
+                                    {/* Step Circle */}
+                                    <div
+                                        onClick={() => goToStep(index)}
+                                        className="flex flex-col items-center relative z-10 cursor-pointer group"
+                                    >
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-4 
+                                            ${isActive ? 'bg-violet-600 text-white border-violet-200 scale-110 shadow-lg shadow-violet-200' :
+                                                isCompleted ? 'bg-violet-600 text-white border-violet-600' :
+                                                    'bg-white text-slate-400 border-slate-200 group-hover:border-violet-200'}`}>
+                                            {isCompleted ? <Check size={20} /> : index + 1}
+                                        </div>
+                                        <span className={`text-xs font-semibold mt-2 absolute -bottom-6 w-32 text-center transition-colors
+                                            ${isActive ? 'text-violet-700' : isCompleted ? 'text-violet-600' : 'text-slate-400'}`}>
+                                            {step.title}
+                                        </span>
                                     </div>
-                                    <span className={`text-xs font-semibold mt-2 ${isActive ? 'text-violet-700' : 'text-slate-500'}`}>
-                                        {step.title}
-                                    </span>
-                                </div>
+
+                                    {/* Connecting Line (Don't show after last step) */}
+                                    {index < steps.length - 1 && (
+                                        <div className="flex-1 h-1 mx-4 rounded-full bg-slate-200 relative overflow-hidden">
+                                            <div
+                                                className={`absolute inset-0 bg-violet-600 transition-all duration-500 ease-out origin-left`}
+                                                style={{
+                                                    transform: isCompleted ? 'scaleX(1)' : 'scaleX(0)'
+                                                }}
+                                            ></div>
+                                        </div>
+                                    )}
+                                </React.Fragment>
                             );
                         })}
                     </div>
                 </div>
 
-                {/* Content Area */}
-                <div className="mb-8 min-h-[400px]">
-                    {currentStep === 0 && <Step1BasicInfo formData={formData} handleChange={handleChange} />}
-                    {currentStep === 1 && <Step2PropertyDetails formData={formData} handleChange={handleChange} handleArrayChange={handleArrayChange} />}
-                    {currentStep === 2 && <Step3Media formData={formData} handleFileChange={handleFileChange} removeFile={removeFile} />}
-                    {currentStep === 3 && <Step4Preview formData={formData} onEditStep={goToStep} />}
+                {/* Content Area with Animation */}
+                <div className="mb-8 min-h-[400px] overflow-hidden">
+                    <div key={currentStep} className={direction === 'forward' ? 'animate-slide-right' : 'animate-slide-left'}>
+                        {currentStep === 0 && <Step1BasicInfo formData={formData} handleChange={handleChange} />}
+                        {currentStep === 1 && <Step2PropertyDetails formData={formData} handleChange={handleChange} handleArrayChange={handleArrayChange} />}
+                        {currentStep === 2 && <Step3Media formData={formData} handleFileChange={handleFileChange} removeFile={removeFile} />}
+                        {currentStep === 3 && <Step4Preview formData={formData} onEditStep={goToStep} />}
+                    </div>
                 </div>
 
                 {/* Navigation Buttons */}
@@ -148,8 +170,8 @@ const AddPropertyPage = () => {
                         onClick={prevStep}
                         disabled={currentStep === 0}
                         className={`px-6 py-2.5 rounded-lg font-semibold transition-colors ${currentStep === 0
-                                ? 'text-slate-300 cursor-not-allowed hidden'
-                                : 'text-slate-600 hover:bg-slate-100'
+                            ? 'text-slate-300 cursor-not-allowed hidden'
+                            : 'text-slate-600 hover:bg-slate-100'
                             }`}
                     >
                         Back
