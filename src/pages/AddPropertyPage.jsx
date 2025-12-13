@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { ChevronRight, Check } from 'lucide-react';
+import { useUI } from '@/context/UIContext';
 import Step1BasicInfo from '@/features/add-property/components/Step1BasicInfo';
 import Step2PropertyDetails from '@/features/add-property/components/Step2PropertyDetails';
 import Step3Media from '@/features/add-property/components/Step3Media';
 import Step4Preview from '@/features/add-property/components/Step4Preview';
 
 const AddPropertyPage = () => {
+    const { showNotification, showLoading, showModal } = useUI();
     const [currentStep, setCurrentStep] = useState(0);
+    const [maxStepReached, setMaxStepReached] = useState(0); // Track furthest step reached
     const [direction, setDirection] = useState('forward');
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         // Step 1
         title: '',
@@ -51,6 +55,10 @@ const AddPropertyPage = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        // Clear Validation Error on Change
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
+        }
     };
 
     const handleArrayChange = (name, value) => {
@@ -78,31 +86,51 @@ const AddPropertyPage = () => {
     };
 
     const validateStep = (step) => {
-        switch (step) {
-            case 0: // Basic Info
-                return formData.title && formData.category && formData.subCategory &&
-                    formData.listingType && formData.expectedPrice &&
-                    formData.firstName && formData.lastName &&
-                    formData.phone && formData.email;
-            case 1: // Details & Address
-                return formData.addressLine1 && formData.city &&
-                    formData.state && formData.pincode;
-            case 2: // Media
-                // Require at least 1 image
-                return formData.images && formData.images.length > 0;
-            default:
-                return true;
+        const newErrors = {};
+
+        if (step === 0) {
+            if (!formData.title) newErrors.title = "Property Title is required";
+            if (!formData.category) newErrors.category = "Category is required";
+            if (!formData.subCategory) newErrors.subCategory = "Sub Category is required";
+            if (!formData.listingType) newErrors.listingType = "Listing Type is required";
+            if (!formData.expectedPrice) newErrors.expectedPrice = "Expected Price is required";
+            if (!formData.firstName) newErrors.firstName = "First Name is required";
+            if (!formData.lastName) newErrors.lastName = "Last Name is required";
+            if (!formData.phone) newErrors.phone = "Phone Number is required";
+            if (!formData.email) newErrors.email = "Email Address is required";
         }
+
+        if (step === 1) {
+            if (!formData.addressLine1) newErrors.addressLine1 = "Address Line 1 is required";
+            if (!formData.city) newErrors.city = "City is required";
+            if (!formData.state) newErrors.state = "State is required";
+            if (!formData.pincode) newErrors.pincode = "Pincode is required";
+        }
+
+        if (step === 2) {
+            if (!formData.images || formData.images.length === 0) {
+                showNotification('error', 'Please upload at least one property image.');
+                return false;
+            }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const nextStep = () => {
         if (!validateStep(currentStep)) {
-            alert("Please fill in all required fields before proceeding.");
+            showNotification('error', 'Please fill in all required fields highlighted in red.');
             return;
         }
         if (currentStep < steps.length - 1) {
+            const nextStepIndex = currentStep + 1;
             setDirection('forward');
-            setCurrentStep(prev => prev + 1);
+            setCurrentStep(nextStepIndex);
+            // Update max step reached
+            if (nextStepIndex > maxStepReached) {
+                setMaxStepReached(nextStepIndex);
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
@@ -117,15 +145,29 @@ const AddPropertyPage = () => {
 
     // Jump to step
     const goToStep = (stepIndex) => {
-        // Only allow going back or staying on current
-        // To go forward, one must use the Next button (which validates)
-        // OR we can check if all intermediate steps are valid? 
-        // Simpler: Only allow clicking previous steps.
-        if (stepIndex >= currentStep) return;
+        // Allow navigation to any previously visited step (up to maxStepReached)
+        // But not beyond what user has unlocked
+        if (stepIndex > maxStepReached) return;
+        if (stepIndex === currentStep) return;
 
-        setDirection('backward');
+        setDirection(stepIndex > currentStep ? 'forward' : 'backward');
         setCurrentStep(stepIndex);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleSubmit = () => {
+        showModal({
+            title: 'Confirm Submission',
+            content: 'Are you sure you want to list this property?',
+            onConfirm: () => {
+                showLoading(true);
+                // Simulate API call
+                setTimeout(() => {
+                    showLoading(false);
+                    showNotification('success', 'Property Listed Successfully!', 5000);
+                }, 2000);
+            }
+        });
     };
 
     return (
@@ -140,41 +182,34 @@ const AddPropertyPage = () => {
 
                 {/* Stepper Progress */}
                 <div className="mb-12">
-                    <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center justify-center w-full">
                         {steps.map((step, index) => {
+                            // Show all steps up to the furthest reached (not just current)
+                            if (index > maxStepReached) return null;
+
                             const isCompleted = index < currentStep;
                             const isActive = index === currentStep;
 
                             return (
                                 <React.Fragment key={step.id}>
+                                    {/* Connecting Line (Show before step if not first) */}
+                                    {index > 0 && (
+                                        <div className="w-16 sm:w-32 h-1 mx-2 rounded-full bg-violet-600 animate-slide-right origin-left"></div>
+                                    )}
                                     {/* Step Circle */}
                                     <div
                                         onClick={() => goToStep(index)}
-                                        className="flex flex-col items-center relative z-10 cursor-pointer group"
+                                        className={`flex flex-col items-center relative z-10 cursor-pointer group animate-fade-in-up`}
                                     >
                                         <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-4 
-                                            ${isActive ? 'bg-violet-600 text-white border-violet-200 scale-110 shadow-lg shadow-violet-200' :
-                                                isCompleted ? 'bg-violet-600 text-white border-violet-600' :
-                                                    'bg-white text-slate-400 border-slate-200 group-hover:border-violet-200'}`}>
+                                             ${isActive ? 'bg-violet-600 text-white border-violet-200 scale-110 shadow-lg shadow-violet-200' :
+                                                'bg-violet-600 text-white border-violet-600'}`}>
                                             {isCompleted ? <Check size={20} /> : index + 1}
                                         </div>
-                                        <span className={`text-xs font-semibold mt-2 absolute -bottom-6 w-32 text-center transition-colors
-                                            ${isActive ? 'text-violet-700' : isCompleted ? 'text-violet-600' : 'text-slate-400'}`}>
+                                        <span className={`text-xs font-semibold mt-2 absolute -bottom-6 w-32 text-center transition-colors text-violet-700`}>
                                             {step.title}
                                         </span>
                                     </div>
-
-                                    {/* Connecting Line (Don't show after last step) */}
-                                    {index < steps.length - 1 && (
-                                        <div className="flex-1 h-1 mx-4 rounded-full bg-slate-200 relative overflow-hidden">
-                                            <div
-                                                className={`absolute inset-0 bg-violet-600 transition-all duration-500 ease-out origin-left`}
-                                                style={{
-                                                    transform: isCompleted ? 'scaleX(1)' : 'scaleX(0)'
-                                                }}
-                                            ></div>
-                                        </div>
-                                    )}
                                 </React.Fragment>
                             );
                         })}
@@ -184,8 +219,8 @@ const AddPropertyPage = () => {
                 {/* Content Area with Animation */}
                 <div className="mb-8 min-h-[400px] overflow-hidden">
                     <div key={currentStep} className={direction === 'forward' ? 'animate-slide-right' : 'animate-slide-left'}>
-                        {currentStep === 0 && <Step1BasicInfo formData={formData} handleChange={handleChange} />}
-                        {currentStep === 1 && <Step2PropertyDetails formData={formData} handleChange={handleChange} handleArrayChange={handleArrayChange} />}
+                        {currentStep === 0 && <Step1BasicInfo formData={formData} handleChange={handleChange} errors={errors} />}
+                        {currentStep === 1 && <Step2PropertyDetails formData={formData} handleChange={handleChange} handleArrayChange={handleArrayChange} errors={errors} />}
                         {currentStep === 2 && <Step3Media formData={formData} handleFileChange={handleFileChange} removeFile={removeFile} />}
                         {currentStep === 3 && <Step4Preview formData={formData} onEditStep={goToStep} />}
                     </div>
@@ -205,8 +240,11 @@ const AddPropertyPage = () => {
                     </button>
 
                     {currentStep === steps.length - 1 ? (
-                        <button className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold shadow-lg shadow-green-200 transition-all transform hover:-translate-y-0.5">
-                            Submit Listing
+                        <button
+                            onClick={handleSubmit}
+                            className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold shadow-lg shadow-green-200 transition-all transform hover:-translate-y-0.5"
+                        >
+                            Submit Verification
                         </button>
                     ) : (
                         <button

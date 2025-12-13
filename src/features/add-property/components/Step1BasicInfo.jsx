@@ -1,23 +1,34 @@
 import React from 'react';
 import { Building2, User } from 'lucide-react';
 
-const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", required = false }) => (
+const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", required = false, error }) => (
     <div className="space-y-1.5">
         <label className="text-sm font-semibold text-slate-700">
             {label} {required && <span className="text-red-500">*</span>}
         </label>
-        <input
-            type={type}
-            name={name}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all placeholder:text-slate-400 text-slate-700 bg-white"
-        />
+        <div className="relative">
+            <input
+                type={type}
+                name={name}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className={`w-full px-4 py-2.5 rounded-lg border focus:ring-2 outline-none transition-all placeholder:text-slate-400 text-slate-700 bg-white
+                    ${error
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
+                        : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
+            />
+            {/* Inline Error Message (Near Input) */}
+            {error && (
+                <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down absolute -bottom-5 left-0">
+                    {error}
+                </p>
+            )}
+        </div>
     </div>
 );
 
-const SelectGroup = ({ label, name, value, onChange, options, required = false }) => (
+const SelectGroup = ({ label, name, value, onChange, options, required = false, error }) => (
     <div className="space-y-1.5">
         <label className="text-sm font-semibold text-slate-700">
             {label} {required && <span className="text-red-500">*</span>}
@@ -27,7 +38,10 @@ const SelectGroup = ({ label, name, value, onChange, options, required = false }
                 name={name}
                 value={value}
                 onChange={onChange}
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all appearance-none bg-white text-slate-700 cursor-pointer"
+                className={`w-full px-4 py-2.5 rounded-lg border focus:ring-2 outline-none transition-all appearance-none bg-white text-slate-700 cursor-pointer
+                    ${error
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
+                        : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
             >
                 <option value="">Select Option</option>
                 {options.map(opt => (
@@ -35,15 +49,22 @@ const SelectGroup = ({ label, name, value, onChange, options, required = false }
                 ))}
             </select>
             <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                <svg className={`w-4 h-4 ${error ? 'text-red-400' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
             </div>
+
+            {/* Inline Error Message */}
+            {error && (
+                <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down absolute -bottom-5 left-0">
+                    {error}
+                </p>
+            )}
         </div>
     </div>
 );
 
-const Step1BasicInfo = ({ formData, handleChange }) => {
+const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in-up">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in-up pb-6"> {/* Added pb-6 to accommodate error messages */}
 
             {/* Column 1: Property Information */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
@@ -54,7 +75,7 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                     <h3 className="text-lg font-bold text-slate-800">Property Information</h3>
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-6"> {/* Increased spacing */}
                     <InputGroup
                         label="Property Title"
                         name="title"
@@ -62,9 +83,10 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                         onChange={handleChange}
                         placeholder="e.g. Luxury 3BHK Villa in Whitefield"
                         required
+                        error={errors.title}
                     />
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <SelectGroup
                             label="Category"
                             name="category"
@@ -72,6 +94,7 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                             onChange={handleChange}
                             options={['Apartment', 'Villa', 'Independent House', 'Plot', 'Commercial']}
                             required
+                            error={errors.category}
                         />
                         <SelectGroup
                             label="Sub Category"
@@ -80,6 +103,7 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                             onChange={handleChange}
                             options={['Resale', 'New Launch', 'Ready to Move', 'Under Construction']}
                             required
+                            error={errors.subCategory}
                         />
                     </div>
 
@@ -90,9 +114,10 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                         onChange={handleChange}
                         options={['Sale', 'Rent', 'Lease']}
                         required
+                        error={errors.listingType}
                     />
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <InputGroup
                             label="Expected Price (₹)"
                             name="expectedPrice"
@@ -101,6 +126,7 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                             placeholder="0"
                             type="number"
                             required
+                            error={errors.expectedPrice}
                         />
                         <InputGroup
                             label="Negotiated Price (₹)"
@@ -123,8 +149,8 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                     <h3 className="text-lg font-bold text-slate-800">Contact Details</h3>
                 </div>
 
-                <div className="space-y-5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <InputGroup
                             label="First Name"
                             name="firstName"
@@ -132,6 +158,7 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                             onChange={handleChange}
                             placeholder="John"
                             required
+                            error={errors.firstName}
                         />
                         <InputGroup
                             label="Last Name"
@@ -140,6 +167,7 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                             onChange={handleChange}
                             placeholder="Doe"
                             required
+                            error={errors.lastName}
                         />
                     </div>
 
@@ -151,6 +179,7 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                         placeholder="+91 98765 43210"
                         type="tel"
                         required
+                        error={errors.phone}
                     />
 
                     <InputGroup
@@ -170,6 +199,7 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                         placeholder="john.doe@example.com"
                         type="email"
                         required
+                        error={errors.email}
                     />
                 </div>
             </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Home, MapPin, Plus, X } from 'lucide-react';
 
-const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", required = false, suffix }) => (
+const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", required = false, suffix, error }) => (
     <div className="space-y-1.5">
         <label className="text-sm font-semibold text-slate-700">
             {label} {required && <span className="text-red-500">*</span>}
@@ -13,18 +13,27 @@ const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", 
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className={`w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all placeholder:text-slate-400 text-slate-700 bg-white ${suffix ? 'pr-12' : ''}`}
+                className={`w-full px-4 py-2.5 rounded-lg border focus:ring-2 outline-none transition-all placeholder:text-slate-400 text-slate-700 bg-white ${suffix ? 'pr-12' : ''}
+                    ${error
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
+                        : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
             />
             {suffix && (
                 <div className="absolute inset-y-0 right-0 px-3 flex items-center bg-slate-50 border-l border-slate-200 rounded-r-lg text-slate-500 text-sm font-medium">
                     {suffix}
                 </div>
             )}
+            {/* Inline Error Message */}
+            {error && (
+                <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down absolute -bottom-5 left-0">
+                    {error}
+                </p>
+            )}
         </div>
     </div>
 );
 
-const SelectGroup = ({ label, name, value, onChange, options, required = false }) => (
+const SelectGroup = ({ label, name, value, onChange, options, required = false, error }) => (
     <div className="space-y-1.5">
         <label className="text-sm font-semibold text-slate-700">
             {label} {required && <span className="text-red-500">*</span>}
@@ -34,7 +43,10 @@ const SelectGroup = ({ label, name, value, onChange, options, required = false }
                 name={name}
                 value={value}
                 onChange={onChange}
-                className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all appearance-none bg-white text-slate-700 cursor-pointer"
+                className={`w-full px-4 py-2.5 rounded-lg border focus:ring-2 outline-none transition-all appearance-none bg-white text-slate-700 cursor-pointer
+                    ${error
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
+                        : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
             >
                 <option value="">Select Option</option>
                 {options.map(opt => (
@@ -42,8 +54,15 @@ const SelectGroup = ({ label, name, value, onChange, options, required = false }
                 ))}
             </select>
             <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                <svg className={`w-4 h-4 ${error ? 'text-red-400' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
             </div>
+
+            {/* Inline Error Message */}
+            {error && (
+                <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down absolute -bottom-5 left-0">
+                    {error}
+                </p>
+            )}
         </div>
     </div>
 );
@@ -53,7 +72,7 @@ const AMENITIES_LIST = [
     'Security', 'Park', 'Gas Pipeline', 'Power Backup', 'Water Supply'
 ];
 
-const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => {
+const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, errors = {} }) => {
     const [customFeature, setCustomFeature] = useState('');
 
     const toggleAmenity = (amenity) => {
@@ -79,7 +98,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in-up">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in-up pb-6">
 
             {/* Column 1: Property Specifications */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
@@ -90,8 +109,8 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
                     <h3 className="text-lg font-bold text-slate-800">Property Details</h3>
                 </div>
 
-                <div className="space-y-5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <InputGroup
                             label="Plot Area"
                             name="plotArea"
@@ -112,7 +131,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <SelectGroup
                             label="Bedrooms"
                             name="bedrooms"
@@ -149,8 +168,8 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
                                         type="button"
                                         onClick={() => toggleAmenity(amenity)}
                                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${isSelected
-                                                ? 'bg-violet-100 border-violet-200 text-violet-700'
-                                                : 'bg-white border-slate-200 text-slate-600 hover:border-violet-300'
+                                            ? 'bg-violet-100 border-violet-200 text-violet-700'
+                                            : 'bg-white border-slate-200 text-slate-600 hover:border-violet-300'
                                             }`}
                                     >
                                         {amenity}
@@ -205,7 +224,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
                     <h3 className="text-lg font-bold text-slate-800">Address Details</h3>
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-6">
                     <InputGroup
                         label="Address Line 1"
                         name="addressLine1"
@@ -213,6 +232,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
                         onChange={handleChange}
                         placeholder="House No, Street Name"
                         required
+                        error={errors.addressLine1}
                     />
                     <InputGroup
                         label="Address Line 2"
@@ -222,7 +242,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
                         placeholder="Landmark, Area"
                     />
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <InputGroup
                             label="City"
                             name="city"
@@ -230,6 +250,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
                             onChange={handleChange}
                             placeholder="Bangalore"
                             required
+                            error={errors.city}
                         />
                         <InputGroup
                             label="State"
@@ -238,6 +259,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
                             onChange={handleChange}
                             placeholder="Karnataka"
                             required
+                            error={errors.state}
                         />
                     </div>
                     <InputGroup
@@ -248,6 +270,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange }) => 
                         placeholder="560001"
                         type="number"
                         required
+                        error={errors.pincode}
                     />
                 </div>
             </div>
