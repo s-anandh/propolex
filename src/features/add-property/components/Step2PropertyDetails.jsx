@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Home, MapPin, Plus, X } from 'lucide-react';
 
-const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", required = false, suffix, error }) => (
+const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", required = false, suffix, error, ...props }) => (
     <div className={`space-y-1.5 ${error ? 'mb-5 ' : ''}`}>
         <label className="text-sm font-semibold text-slate-700">
             {label} {required && <span className="text-red-500">*</span>}
@@ -17,6 +17,7 @@ const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", 
                     ${error
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
                         : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
+                {...props}
             />
             {suffix && (
                 <div className="absolute inset-y-0.5 right-0.5 px-3 flex items-center bg-slate-50 border-l border-slate-200 rounded-r-lg text-slate-500 text-sm font-medium pointer-events-none">
@@ -120,6 +121,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, error
                             suffix="Sq.ft"
                             type="number"
                             error={errors.plotArea}
+                            min="0"
                         />
                         <InputGroup
                             label="Built-up Area"
@@ -130,6 +132,7 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, error
                             suffix="Sq.ft"
                             type="number"
                             error={errors.builtUpArea}
+                            min="0"
                         />
                     </div>
 
@@ -239,6 +242,8 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, error
                         placeholder="House No, Street Name"
                         required
                         error={errors.addressLine1}
+                        minLength={5}
+                        maxLength={200}
                     />
                     <InputGroup
                         label="Address Line 2"
@@ -274,7 +279,9 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, error
                         value={formData.pincode}
                         onChange={handleChange}
                         placeholder="560001"
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
                         required
                         error={errors.pincode}
                     />

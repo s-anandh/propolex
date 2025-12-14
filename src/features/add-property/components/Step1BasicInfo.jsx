@@ -1,7 +1,7 @@
 import React from 'react';
 import { Building2, User } from 'lucide-react';
 
-const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", required = false, error }) => (
+const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", required = false, error, ...props }) => (
     <div className="space-y-1.5">
         <label className="text-sm font-semibold text-slate-700">
             {label} {required && <span className="text-red-500">*</span>}
@@ -17,6 +17,7 @@ const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", 
                     ${error
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
                         : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
+                {...props}
             />
             {/* Inline Error Message (Near Input) */}
             {error && (
@@ -84,6 +85,8 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                         placeholder="e.g. Luxury 3BHK Villa in Whitefield"
                         required
                         error={errors.title}
+                        minLength={10}
+                        maxLength={50}
                     />
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -127,6 +130,7 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                             type="number"
                             required
                             error={errors.expectedPrice}
+                            min="0"
                         />
                         <InputGroup
                             label="Negotiated Price (₹)"
@@ -135,6 +139,7 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                             onChange={handleChange}
                             placeholder="Optional"
                             type="number"
+                            min="0"
                         />
                     </div>
                 </div>
@@ -159,15 +164,19 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                             placeholder="John"
                             required
                             error={errors.firstName}
+                            minLength={2}
+                            maxLength={50}
                         />
                         <InputGroup
-                            label="Last Name"
+                            label="Last Name ( initials allowed )"
                             name="lastName"
                             value={formData.lastName}
                             onChange={handleChange}
                             placeholder="Doe"
                             required
                             error={errors.lastName}
+                            minLength={1}
+                            maxLength={50}
                         />
                     </div>
 

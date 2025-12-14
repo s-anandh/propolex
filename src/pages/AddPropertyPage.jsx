@@ -112,49 +112,76 @@ const AddPropertyPage = () => {
         const newErrors = {};
 
         if (step === 0) {
-            if (!formData.title) newErrors.title = "Property Title is required";
+            // Step 1: Basic Info Validation
+            if (!formData.title?.trim()) newErrors.title = "Property Title is required";
+            else if (formData.title.length < 10) newErrors.title = "Title must be at least 10 characters";
+            else if (formData.title.length > 100) newErrors.title = "Title must not exceed 100 characters";
+
             if (!formData.category) newErrors.category = "Category is required";
             if (!formData.subCategory) newErrors.subCategory = "Sub Category is required";
             if (!formData.listingType) newErrors.listingType = "Listing Type is required";
+
             if (!formData.expectedPrice) newErrors.expectedPrice = "Expected Price is required";
-            if (!formData.firstName) newErrors.firstName = "First Name is required";
-            if (!formData.lastName) newErrors.lastName = "Last Name is required";
+            else if (Number(formData.expectedPrice) <= 0) newErrors.expectedPrice = "Price must be greater than 0";
+
+            if (formData.negotiatedPrice) {
+                if (Number(formData.negotiatedPrice) <= 0) newErrors.negotiatedPrice = "Negotiated Price must be valid";
+                else if (Number(formData.negotiatedPrice) > Number(formData.expectedPrice)) newErrors.negotiatedPrice = "Negotiated Price cannot exceed Expected Price";
+            }
+
+            if (!formData.firstName?.trim()) newErrors.firstName = "First Name is required";
+            else if (formData.firstName.length < 2) newErrors.firstName = "First Name is too short";
+
+            if (!formData.lastName?.trim()) newErrors.lastName = "Last Name is required";
+
+            // Phone Regex: Starts with optional +91, then 6-9 followed by 9 digits
+            const phoneRegex = /^(\+91[\-\s]?)?[6-9]\d{9}$/;
             if (!formData.phone) newErrors.phone = "Phone Number is required";
+            else if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) newErrors.phone = "Invalid Indian Phone Number (10 digits)";
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!formData.email) newErrors.email = "Email Address is required";
+            else if (!emailRegex.test(formData.email)) newErrors.email = "Invalid Email Address";
         }
 
         if (step === 1) {
-            // Property Details validation
-            if (!formData.builtUpArea && !formData.plotArea) {
-                newErrors.builtUpArea = "Either Built-up Area or Plot Area is required";
-                newErrors.plotArea = "Either Built-up Area or Plot Area is required";
+            // Step 2: Property Details Validation
+            if (!formData.plotArea && !formData.builtUpArea) {
+                newErrors.plotArea = "Complete at least one area field";
+                newErrors.builtUpArea = "Complete at least one area field";
+            } else {
+                if (formData.plotArea && Number(formData.plotArea) <= 0) newErrors.plotArea = "Area must be positive";
+                if (formData.builtUpArea && Number(formData.builtUpArea) <= 0) newErrors.builtUpArea = "Area must be positive";
             }
+
             if (!formData.bedrooms) newErrors.bedrooms = "Bedrooms is required";
             if (!formData.bathrooms) newErrors.bathrooms = "Bathrooms is required";
 
-            // Address validation
-            if (!formData.addressLine1) newErrors.addressLine1 = "Address Line 1 is required";
-            if (!formData.city) newErrors.city = "City is required";
-            if (!formData.state) newErrors.state = "State is required";
+            // Address Validation
+            if (!formData.addressLine1?.trim()) newErrors.addressLine1 = "Address Line 1 is required";
+            else if (formData.addressLine1.length < 5) newErrors.addressLine1 = "Address is too short";
+
+            if (!formData.city?.trim()) newErrors.city = "City is required";
+            if (!formData.state?.trim()) newErrors.state = "State is required";
+
+            const pincodeRegex = /^\d{6}$/;
             if (!formData.pincode) newErrors.pincode = "Pincode is required";
+            else if (!pincodeRegex.test(formData.pincode)) newErrors.pincode = "Pincode must be exactly 6 digits";
         }
 
-
         if (step === 2) {
+            // Step 3: Media Validation (Existing + Doc Type Checks)
             if (!formData.images || formData.images.length === 0) {
                 newErrors.images = "At least one property image is required";
             }
             if (!formData.ownershipDocs || formData.ownershipDocs.length === 0) {
                 newErrors.ownershipDocs = "At least one ownership document is required";
             } else {
-                // Check if all ownership docs have a type selected
                 const invalidDocs = formData.ownershipDocs.filter(file => !file.docType);
                 if (invalidDocs.length > 0) {
                     newErrors.ownershipDocs = `Please select Document Type for: ${invalidDocs.map(f => f.name).join(', ')}`;
                 }
             }
-
-            // Check additional docs labels if files exist
             if (formData.additionalDocs && formData.additionalDocs.length > 0) {
                 const invalidAdditional = formData.additionalDocs.filter(file => !file.customLabel || !file.customLabel.trim());
                 if (invalidAdditional.length > 0) {
@@ -166,6 +193,7 @@ const AddPropertyPage = () => {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
 
     const nextStep = () => {
         if (!validateStep(currentStep)) {
