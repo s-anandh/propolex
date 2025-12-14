@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, AlertCircle } from 'lucide-react';
+import { Edit, AlertCircle, FileCheck, FileX, FileText, File, BookOpen, Paperclip, CheckCircle2, XCircle, LayoutGrid } from 'lucide-react';
 import PropertyCard from '@/components/properties/PropertyCard';
 
 const Step4Preview = ({ formData, onEditStep }) => {
@@ -53,7 +53,7 @@ const Step4Preview = ({ formData, onEditStep }) => {
                 <div className="flex justify-between items-center mb-4">
                     <div>
                         <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                            <span className="text-violet-600">📋</span> Listing Preview
+                            <LayoutGrid className="text-violet-600" size={20} /> Listing Preview
                         </h3>
                         <p className="text-xs text-slate-500 mt-1">This is how your property will appear on the platform</p>
                     </div>
@@ -182,7 +182,7 @@ const Step4Preview = ({ formData, onEditStep }) => {
 
             {/* Documents & Media - Full Width */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                <div className="flex justify-between items-center mb-6 pb-3 border-b border-slate-100">
                     <h4 className="font-bold text-slate-800">Documents & Media</h4>
                     <button
                         onClick={() => onEditStep(2)}
@@ -192,114 +192,107 @@ const Step4Preview = ({ formData, onEditStep }) => {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-6">
                     {/* Property Images */}
-                    <div className={`p-4 rounded-lg border-2 ${formData.images?.length > 0 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
-                        <div className="flex items-start justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                                <span className="text-lg">{formData.images?.length > 0 ? '✅' : '❌'}</span>
-                                <div>
-                                    <h5 className="font-semibold text-sm text-slate-800">Property Images *</h5>
-                                    <p className="text-xs text-slate-500">Required for listing</p>
-                                </div>
-                            </div>
+                    <div>
+                        <div className="flex items-center gap-2 mb-3">
+                            {formData.images?.length > 0 ? <CheckCircle2 className="text-green-600" size={18} /> : <XCircle className="text-red-500" size={18} />}
+                            <h5 className="font-semibold text-sm text-slate-800">Property Images</h5>
                         </div>
+
                         {formData.images?.length > 0 ? (
-                            <div className="space-y-1">
-                                <p className="text-sm font-medium text-green-700">{formData.images.length} image(s) uploaded</p>
-                                <div className="flex flex-wrap gap-1 mt-2">
-                                    {formData.images.slice(0, 3).map((img, idx) => (
-                                        <div key={idx} className="w-16 h-16 rounded overflow-hidden border border-slate-200">
-                                            <img src={URL.createObjectURL(img)} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                {formData.images.map((img, idx) => (
+                                    <div key={idx} className="aspect-square relative rounded-lg overflow-hidden border border-slate-200 group">
+                                        <img src={URL.createObjectURL(img)} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-red-500 italic px-3 py-2 bg-red-50 rounded-lg border border-red-100 inline-block">
+                                No images uploaded (Required)
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Ownership Documents */}
+                        <div className={`p-4 rounded-xl border ${formData.ownershipDocs?.length > 0 ? 'border-blue-100 bg-blue-50/30' : 'border-slate-200 bg-slate-50'}`}>
+                            <div className="flex items-center gap-2 mb-3">
+                                {formData.ownershipDocs?.length > 0 ? <FileCheck className="text-blue-600" size={18} /> : <File className="text-slate-400" size={18} />}
+                                <h5 className="font-semibold text-sm text-slate-800">Ownership Documents</h5>
+                            </div>
+
+                            {formData.ownershipDocs?.length > 0 ? (
+                                <div className="space-y-2">
+                                    {formData.ownershipDocs.map((doc, idx) => (
+                                        <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                            <div className="p-2 bg-blue-50 text-blue-600 rounded">
+                                                <FileText size={16} />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="text-xs font-medium text-slate-700 truncate">{doc.name}</p>
+                                                <p className="text-[10px] text-slate-500">{(doc.size / 1024 / 1024).toFixed(2)} MB</p>
+                                            </div>
                                         </div>
                                     ))}
-                                    {formData.images.length > 3 && (
-                                        <div className="w-16 h-16 rounded bg-slate-100 border border-slate-200 flex items-center justify-center">
-                                            <span className="text-xs text-slate-600 font-medium">+{formData.images.length - 3}</span>
+                                </div>
+                            ) : (
+                                <p className="text-xs text-slate-500 italic">No documents provided</p>
+                            )}
+                        </div>
+
+                        {/* Additional Documents */}
+                        <div className={`p-4 rounded-xl border ${formData.additionalDocs?.length > 0 ? 'border-blue-100 bg-blue-50/30' : 'border-slate-200 bg-slate-50'}`}>
+                            <div className="flex items-center gap-2 mb-3">
+                                {formData.additionalDocs?.length > 0 ? <FileCheck className="text-blue-600" size={18} /> : <File className="text-slate-400" size={18} />}
+                                <h5 className="font-semibold text-sm text-slate-800">Additional Documents</h5>
+                            </div>
+
+                            {formData.additionalDocs?.length > 0 ? (
+                                <div className="space-y-2">
+                                    {formData.additionalDocs.map((doc, idx) => (
+                                        <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                            <div className="p-2 bg-blue-50 text-blue-600 rounded">
+                                                <FileText size={16} />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="text-xs font-medium text-slate-700 truncate">{doc.name}</p>
+                                                <p className="text-[10px] text-slate-500">{(doc.size / 1024 / 1024).toFixed(2)} MB</p>
+                                            </div>
                                         </div>
-                                    )}
-                                </div>
-                            </div>
-                        ) : (
-                            <p className="text-sm text-red-600 font-medium">No images uploaded</p>
-                        )}
-                    </div>
-
-                    {/* Ownership Documents */}
-                    <div className={`p-4 rounded-lg border-2 ${formData.ownershipDocs?.length > 0 ? 'border-blue-200 bg-blue-50' : 'border-slate-200 bg-slate-50'}`}>
-                        <div className="flex items-start justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                                <span className="text-lg">{formData.ownershipDocs?.length > 0 ? '📄' : '📋'}</span>
-                                <div>
-                                    <h5 className="font-semibold text-sm text-slate-800">Ownership Documents</h5>
-                                    <p className="text-xs text-slate-500">Optional</p>
-                                </div>
-                            </div>
-                        </div>
-                        {formData.ownershipDocs?.length > 0 ? (
-                            <div>
-                                <p className="text-sm font-medium text-blue-700">{formData.ownershipDocs.length} document(s) uploaded</p>
-                                <div className="mt-2 space-y-1">
-                                    {formData.ownershipDocs.slice(0, 2).map((doc, idx) => (
-                                        <p key={idx} className="text-xs text-slate-600 truncate">📎 {doc.name}</p>
                                     ))}
-                                    {formData.ownershipDocs.length > 2 && (
-                                        <p className="text-xs text-slate-500">...and {formData.ownershipDocs.length - 2} more</p>
-                                    )}
                                 </div>
-                            </div>
-                        ) : (
-                            <p className="text-sm text-slate-500">No documents uploaded</p>
-                        )}
+                            ) : (
+                                <p className="text-xs text-slate-500 italic">No documents provided</p>
+                            )}
+                        </div>
                     </div>
 
-                    {/* Additional Documents */}
-                    <div className={`p-4 rounded-lg border-2 ${formData.additionalDocs?.length > 0 ? 'border-blue-200 bg-blue-50' : 'border-slate-200 bg-slate-50'}`}>
-                        <div className="flex items-start justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                                <span className="text-lg">{formData.additionalDocs?.length > 0 ? '📄' : '📋'}</span>
-                                <div>
-                                    <h5 className="font-semibold text-sm text-slate-800">Additional Documents</h5>
-                                    <p className="text-xs text-slate-500">Optional</p>
-                                </div>
+                    {/* Brochure */}
+                    <div>
+                        <div className={`p-4 rounded-xl border ${formData.brochure ? 'border-purple-100 bg-purple-50/30' : 'border-slate-200 bg-slate-50'}`}>
+                            <div className="flex items-center gap-2 mb-3">
+                                {formData.brochure ? <BookOpen className="text-purple-600" size={18} /> : <BookOpen className="text-slate-400" size={18} />}
+                                <h5 className="font-semibold text-sm text-slate-800">Property Brochure</h5>
                             </div>
-                        </div>
-                        {formData.additionalDocs?.length > 0 ? (
-                            <div>
-                                <p className="text-sm font-medium text-blue-700">{formData.additionalDocs.length} document(s) uploaded</p>
-                                <div className="mt-2 space-y-1">
-                                    {formData.additionalDocs.slice(0, 2).map((doc, idx) => (
-                                        <p key={idx} className="text-xs text-slate-600 truncate">📎 {doc.name}</p>
-                                    ))}
-                                    {formData.additionalDocs.length > 2 && (
-                                        <p className="text-xs text-slate-500">...and {formData.additionalDocs.length - 2} more</p>
-                                    )}
-                                </div>
-                            </div>
-                        ) : (
-                            <p className="text-sm text-slate-500">No documents uploaded</p>
-                        )}
-                    </div>
 
-                    {/* Property Brochure */}
-                    <div className={`p-4 rounded-lg border-2 ${formData.brochure ? 'border-purple-200 bg-purple-50' : 'border-slate-200 bg-slate-50'}`}>
-                        <div className="flex items-start justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                                <span className="text-lg">{formData.brochure ? '📘' : '📖'}</span>
-                                <div>
-                                    <h5 className="font-semibold text-sm text-slate-800">Property Brochure</h5>
-                                    <p className="text-xs text-slate-500">Optional</p>
+                            {formData.brochure ? (
+                                <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-100 shadow-sm max-w-md">
+                                    <div className="p-2 bg-purple-50 text-purple-600 rounded">
+                                        <BookOpen size={20} />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-medium text-slate-700 truncate">{formData.brochure.name}</p>
+                                        <p className="text-xs text-slate-500">{(formData.brochure.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    </div>
+                                    <span className="ml-auto text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded">PDF</span>
                                 </div>
-                            </div>
+                            ) : (
+                                <p className="text-xs text-slate-500 italic">No brochure uploaded</p>
+                            )}
                         </div>
-                        {formData.brochure ? (
-                            <div>
-                                <p className="text-sm font-medium text-purple-700">Brochure uploaded</p>
-                                <p className="text-xs text-slate-600 mt-1 truncate">📎 {formData.brochure.name}</p>
-                            </div>
-                        ) : (
-                            <p className="text-sm text-slate-500">No brochure uploaded</p>
-                        )}
                     </div>
                 </div>
             </div>

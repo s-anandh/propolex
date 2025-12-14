@@ -17,7 +17,7 @@ const AddPropertyPage = () => {
         title: '',
         category: '',
         subCategory: '',
-        listingType: 'Sale',
+        listingType: '',
         expectedPrice: '',
         negotiatedPrice: '',
         firstName: '',
@@ -72,6 +72,10 @@ const AddPropertyPage = () => {
         } else {
             setFormData(prev => ({ ...prev, [name]: [...prev[name], ...files] }));
         }
+        // Clear error on change
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
     };
 
     const removeFile = (name, index) => {
@@ -82,6 +86,25 @@ const AddPropertyPage = () => {
                 ...prev,
                 [name]: prev[name].filter((_, i) => i !== index)
             }));
+        }
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
+    };
+
+    const updateFileMetadata = (name, index, key, value) => {
+        setFormData(prev => {
+            // Create shallow copy of array to trigger re-render
+            const updatedFiles = [...prev[name]];
+            // We mutate the File object directly because spreading it ({...file}) breaks internal File behaviors/properties in some environments.
+            // Since we created a new array reference 'updatedFiles', React will detect the change in formData.
+            // To ensure nested components update, they should not strictly memoize on file reference alone if file properties change,
+            // OR we should accept that we are mutating the file in place.
+            updatedFiles[index][key] = value;
+            return { ...prev, [name]: updatedFiles };
+        });
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
         }
     };
 
@@ -120,6 +143,23 @@ const AddPropertyPage = () => {
         if (step === 2) {
             if (!formData.images || formData.images.length === 0) {
                 newErrors.images = "At least one property image is required";
+            }
+            if (!formData.ownershipDocs || formData.ownershipDocs.length === 0) {
+                newErrors.ownershipDocs = "At least one ownership document is required";
+            } else {
+                // Check if all ownership docs have a type selected
+                const invalidDocs = formData.ownershipDocs.filter(file => !file.docType);
+                if (invalidDocs.length > 0) {
+                    newErrors.ownershipDocs = `Please select Document Type for: ${invalidDocs.map(f => f.name).join(', ')}`;
+                }
+            }
+
+            // Check additional docs labels if files exist
+            if (formData.additionalDocs && formData.additionalDocs.length > 0) {
+                const invalidAdditional = formData.additionalDocs.filter(file => !file.customLabel || !file.customLabel.trim());
+                if (invalidAdditional.length > 0) {
+                    newErrors.additionalDocs = `Please enter labels for: ${invalidAdditional.map(f => f.name).join(', ')}`;
+                }
             }
         }
 
@@ -232,7 +272,7 @@ const AddPropertyPage = () => {
                     <div key={currentStep} className={direction === 'forward' ? 'animate-slide-right' : 'animate-slide-left'}>
                         {currentStep === 0 && <Step1BasicInfo formData={formData} handleChange={handleChange} errors={errors} />}
                         {currentStep === 1 && <Step2PropertyDetails formData={formData} handleChange={handleChange} handleArrayChange={handleArrayChange} errors={errors} />}
-                        {currentStep === 2 && <Step3Media formData={formData} handleFileChange={handleFileChange} removeFile={removeFile} errors={errors} />}
+                        {currentStep === 2 && <Step3Media formData={formData} handleFileChange={handleFileChange} removeFile={removeFile} updateFileMetadata={updateFileMetadata} errors={errors} />}
                         {currentStep === 3 && <Step4Preview formData={formData} onEditStep={goToStep} />}
                     </div>
                 </div>
