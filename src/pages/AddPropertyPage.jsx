@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ChevronRight, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ChevronRight, Check, ArrowLeft } from 'lucide-react';
 import { useUI } from '@/context/UIContext';
 import Step1BasicInfo from '@/features/add-property/components/Step1BasicInfo';
 import Step2PropertyDetails from '@/features/add-property/components/Step2PropertyDetails';
@@ -18,6 +19,8 @@ const AddPropertyPage = () => {
         category: '',
         subCategory: '',
         listingType: '',
+        furnishing: '',
+        possessionStatus: '',
         expectedPrice: '',
         negotiatedPrice: '',
         firstName: '',
@@ -118,8 +121,10 @@ const AddPropertyPage = () => {
             else if (formData.title.length > 100) newErrors.title = "Title must not exceed 100 characters";
 
             if (!formData.category) newErrors.category = "Category is required";
-            if (!formData.subCategory) newErrors.subCategory = "Sub Category is required";
+            if (!formData.subCategory) newErrors.subCategory = "Transaction Type is required";
             if (!formData.listingType) newErrors.listingType = "Listing Type is required";
+            if (!formData.furnishing) newErrors.furnishing = "Furnishing Status is required";
+            if (!formData.possessionStatus) newErrors.possessionStatus = "Possession Status is required";
 
             if (!formData.expectedPrice) newErrors.expectedPrice = "Expected Price is required";
             else if (Number(formData.expectedPrice) <= 0) newErrors.expectedPrice = "Price must be greater than 0";
@@ -254,7 +259,11 @@ const AddPropertyPage = () => {
             <div className="container mx-auto px-4 max-w-5xl">
 
                 {/* Header */}
-                <div className="mb-10 text-center">
+                <div className="mb-10 text-left">
+                    <Link to="/" className="inline-flex items-center text-slate-500 hover:text-violet-600 font-medium transition-colors mb-4">
+                        <ArrowLeft size={18} className="mr-2" />
+                        Back to Home
+                    </Link>
                     <h1 className="text-3xl font-bold text-slate-900">List Your Property</h1>
                     <p className="text-slate-500 mt-2">Follow the 4 simple steps to list your property and get best leads.</p>
                 </div>

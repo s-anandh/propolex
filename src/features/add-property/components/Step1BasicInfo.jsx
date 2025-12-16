@@ -78,7 +78,7 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
 
                 <div className="space-y-6"> {/* Increased spacing */}
                     <InputGroup
-                        label="Property Title"
+                        label="Project / Society Name"
                         name="title"
                         value={formData.title}
                         onChange={handleChange}
@@ -91,34 +91,55 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <SelectGroup
-                            label="Category"
+                            label="Property Category"
                             name="category"
                             value={formData.category}
                             onChange={handleChange}
-                            options={['Apartment', 'Villa', 'Independent House', 'Plot', 'Commercial']}
+                            options={['Apartment', 'Villa', 'Independent House', 'Plot', 'Commercial Office', 'Shop/Showroom']}
                             required
                             error={errors.category}
                         />
                         <SelectGroup
-                            label="Sub Category"
+                            label="Transaction Type"
                             name="subCategory"
                             value={formData.subCategory}
                             onChange={handleChange}
-                            options={['Resale', 'New Launch', 'Ready to Move', 'Under Construction']}
+                            options={['Resale', 'New Booking']}
                             required
                             error={errors.subCategory}
                         />
                     </div>
 
                     <SelectGroup
-                        label="Listing Type"
+                        label="I want to"
                         name="listingType"
                         value={formData.listingType}
                         onChange={handleChange}
-                        options={['Sale', 'Rent', 'Lease']}
+                        options={['Sell', 'Rent', 'Lease']}
                         required
                         error={errors.listingType}
                     />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <SelectGroup
+                            label="Furnishing"
+                            name="furnishing"
+                            value={formData.furnishing}
+                            onChange={handleChange}
+                            options={['Fully Furnished', 'Semi Furnished', 'Unfurnished']}
+                            required
+                            error={errors.furnishing}
+                        />
+                        <SelectGroup
+                            label="Possession Status"
+                            name="possessionStatus"
+                            value={formData.possessionStatus}
+                            onChange={handleChange}
+                            options={['Ready to Move', 'Under Construction']}
+                            required
+                            error={errors.possessionStatus}
+                        />
+                    </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <InputGroup
