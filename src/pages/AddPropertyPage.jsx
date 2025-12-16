@@ -39,6 +39,7 @@ const AddPropertyPage = () => {
         features: [],
         addressLine1: '',
         addressLine2: '',
+        addressLine3: '',
         city: '',
         state: '',
         pincode: '',
@@ -258,7 +259,7 @@ const AddPropertyPage = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 py-10">
-            <div className="container mx-auto px-4 max-w-5xl">
+            <div className="container mx-auto px-4 max-w-7xl">
 
                 {/* Header */}
                 <div className="mb-10 text-left">
@@ -274,29 +275,36 @@ const AddPropertyPage = () => {
                 <div className="mb-12">
                     <div className="flex items-center justify-center w-full">
                         {steps.map((step, index) => {
-                            // Show all steps up to the furthest reached (not just current)
-                            if (index > maxStepReached) return null;
-
+                            const isUnlocked = index <= maxStepReached;
                             const isCompleted = index < currentStep;
                             const isActive = index === currentStep;
 
                             return (
                                 <React.Fragment key={step.id}>
-                                    {/* Connecting Line (Show before step if not first) */}
+                                    {/* Connecting Line */}
                                     {index > 0 && (
-                                        <div className="w-16 sm:w-32 h-1 mx-2 rounded-full bg-violet-600 animate-slide-right origin-left"></div>
+                                        <div className={`w-16 sm:w-32 h-1 mx-2 rounded-full transition-colors duration-300 ${index <= maxStepReached ? 'bg-violet-600' : 'bg-slate-200'
+                                            }`}></div>
                                     )}
                                     {/* Step Circle */}
                                     <div
-                                        onClick={() => goToStep(index)}
-                                        className={`flex flex-col items-center relative z-10 cursor-pointer group animate-fade-in-up`}
+                                        onClick={() => isUnlocked && goToStep(index)}
+                                        className={`flex flex-col items-center relative z-10 group animate-fade-in-up ${isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed'
+                                            }`}
                                     >
                                         <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-4 
-                                             ${isActive ? 'bg-violet-600 text-white border-violet-200 scale-110 shadow-lg shadow-violet-200' :
-                                                'bg-violet-600 text-white border-violet-600'}`}>
+                                            ${isActive
+                                                ? 'bg-violet-600 text-white border-violet-200 scale-110 shadow-lg shadow-violet-200'
+                                                : isCompleted
+                                                    ? 'bg-violet-600 text-white border-violet-600'
+                                                    : isUnlocked
+                                                        ? 'bg-white text-violet-600 border-violet-600'
+                                                        : 'bg-slate-100 text-slate-400 border-slate-200'
+                                            }`}>
                                             {isCompleted ? <Check size={20} /> : index + 1}
                                         </div>
-                                        <span className={`text-xs font-semibold mt-2 absolute -bottom-6 w-32 text-center transition-colors text-violet-700`}>
+                                        <span className={`text-xs font-semibold mt-2 absolute -bottom-6 w-32 text-center transition-colors ${isActive || isCompleted || isUnlocked ? 'text-violet-700' : 'text-slate-400'
+                                            }`}>
                                             {step.title}
                                         </span>
                                     </div>

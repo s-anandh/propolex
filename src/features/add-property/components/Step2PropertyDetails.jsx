@@ -69,8 +69,11 @@ const SelectGroup = ({ label, name, value, onChange, options, required = false, 
 );
 
 const AMENITIES_LIST = [
-    'Swimming Pool', 'Gym', 'Club House', 'Parking', 'Lift',
-    'Security', 'Park', 'Gas Pipeline', 'Power Backup', 'Water Supply'
+    'Swimming Pool', 'Gym', 'Club House', 'Parking', 'Lift', 'Internet/Wi-Fi',
+    'Security', 'Park', 'Gas Pipeline', 'Power Backup', 'Water Supply',
+    'Children\'s Play Area', 'Rain Water Harvesting', 'Sewage Treatment Plant',
+    'Vastu Compliant', 'Visitor Parking', 'Intercom', 'Fire Safety',
+    'Maintenance Staff', 'CCTV Camera', 'Badminton Court', 'Tennis Court'
 ];
 
 const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, errors = {} }) => {
@@ -251,6 +254,13 @@ const Step2PropertyDetails = ({ formData, handleChange, handleArrayChange, error
                         value={formData.addressLine2}
                         onChange={handleChange}
                         placeholder="Landmark, Area"
+                    />
+                    <InputGroup
+                        label="Address Line 3"
+                        name="addressLine3"
+                        value={formData.addressLine3}
+                        onChange={handleChange}
+                        placeholder="Optional"
                     />
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

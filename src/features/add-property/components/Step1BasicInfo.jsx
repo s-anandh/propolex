@@ -65,10 +65,10 @@ const SelectGroup = ({ label, name, value, onChange, options, required = false, 
 
 const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in-up pb-6"> {/* Added pb-6 to accommodate error messages */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in-up pb-6 w-full">
 
             {/* Column 1: Property Information */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6 lg:col-span-2">
                 <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
                     <div className="p-2 bg-violet-50 rounded-lg text-violet-600">
                         <Building2 size={24} />
@@ -187,30 +187,30 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <InputGroup
-                            label="First Name"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleChange}
-                            placeholder="John"
-                            required
-                            error={errors.firstName}
-                            minLength={2}
-                            maxLength={50}
-                        />
-                        <InputGroup
-                            label="Last Name ( initials allowed )"
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleChange}
-                            placeholder="Doe"
-                            required
-                            error={errors.lastName}
-                            minLength={1}
-                            maxLength={50}
-                        />
-                    </div>
+
+                    <InputGroup
+                        label="First Name"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        placeholder="John"
+                        required
+                        error={errors.firstName}
+                        minLength={2}
+                        maxLength={50}
+                    />
+                    <InputGroup
+                        label="Last Name ( initials allowed )"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        placeholder="Doe"
+                        required
+                        error={errors.lastName}
+                        minLength={1}
+                        maxLength={50}
+                    />
+
 
                     <InputGroup
                         label="Phone Number"
