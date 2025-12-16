@@ -20,6 +20,7 @@ const AddPropertyPage = () => {
         subCategory: '',
         listingType: '',
         furnishing: '',
+        postedBy: '',
         possessionStatus: '',
         expectedPrice: '',
         negotiatedPrice: '',
@@ -123,6 +124,7 @@ const AddPropertyPage = () => {
             if (!formData.category) newErrors.category = "Category is required";
             if (!formData.subCategory) newErrors.subCategory = "Transaction Type is required";
             if (!formData.listingType) newErrors.listingType = "Listing Type is required";
+            if (!formData.postedBy) newErrors.postedBy = "Posted By is required";
             if (!formData.furnishing) newErrors.furnishing = "Furnishing Status is required";
             if (!formData.possessionStatus) newErrors.possessionStatus = "Possession Status is required";
 

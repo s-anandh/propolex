@@ -95,7 +95,7 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                             name="category"
                             value={formData.category}
                             onChange={handleChange}
-                            options={['Apartment', 'Villa', 'Independent House', 'Plot', 'Commercial Office', 'Shop/Showroom']}
+                            options={['Apartment', 'Independent House / Villa', 'Residential Plot', 'Farm House', 'Studio Apartment', 'Service Apartment', 'Commercial Office', 'Shop/Showroom']}
                             required
                             error={errors.category}
                         />
@@ -104,21 +104,32 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                             name="subCategory"
                             value={formData.subCategory}
                             onChange={handleChange}
-                            options={['Resale', 'New Booking']}
+                            options={['Resale', 'New Launch']}
                             required
                             error={errors.subCategory}
                         />
                     </div>
 
-                    <SelectGroup
-                        label="I want to"
-                        name="listingType"
-                        value={formData.listingType}
-                        onChange={handleChange}
-                        options={['Sell', 'Rent', 'Lease']}
-                        required
-                        error={errors.listingType}
-                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <SelectGroup
+                            label="I want to"
+                            name="listingType"
+                            value={formData.listingType}
+                            onChange={handleChange}
+                            options={['Sell', 'Rent', 'Lease']}
+                            required
+                            error={errors.listingType}
+                        />
+                        <SelectGroup
+                            label="I am (Posted By)"
+                            name="postedBy"
+                            value={formData.postedBy}
+                            onChange={handleChange}
+                            options={['Owner', 'Broker / Agent', 'Builder']}
+                            required
+                            error={errors.postedBy}
+                        />
+                    </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <SelectGroup
@@ -135,7 +146,7 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                             name="possessionStatus"
                             value={formData.possessionStatus}
                             onChange={handleChange}
-                            options={['Ready to Move', 'Under Construction']}
+                            options={['Ready to Move', 'In 1 Year', 'In 3 Years', 'Beyond 3 Years', 'Under Construction']}
                             required
                             error={errors.possessionStatus}
                         />
