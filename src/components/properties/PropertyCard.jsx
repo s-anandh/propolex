@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { BadgeCheck, Clock, MapPin, Bed, Bath, Square, Heart, Phone, Mail, ChevronLeft, ChevronRight, Download, CheckCircle2, Bookmark, Sparkles } from 'lucide-react';
 
 const PropertyCard = ({ property }) => {
     const {
+        id, // Added id destructuring
         images,
         price,
         valuation,
@@ -56,17 +58,20 @@ const PropertyCard = ({ property }) => {
         >
             {/* Image Container - Restored to readable size (w-2/5) */}
             <div className="relative w-full md:w-2/5 lg:w-1/3 h-64 md:h-auto overflow-hidden flex-shrink-0 bg-slate-200">
-                {/* Images with Fade Effect */}
-                {images.map((img, index) => (
-                    <img
-                        key={index}
-                        src={img}
-                        alt={`${title} - View ${index + 1}`}
-                        className={`w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-700 ease-in-out ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-                            }`}
-                        style={{ zIndex: index === currentImageIndex ? 1 : 0 }}
-                    />
-                ))}
+                <Link to={`/property/${id}`}>
+                    {/* Images with Fade Effect */}
+                    {images.map((img, index) => (
+                        <img
+                            key={index}
+                            src={img}
+                            alt={`${title} - View ${index + 1}`}
+                            loading="lazy"
+                            className={`w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-700 ease-in-out ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                                }`}
+                            style={{ zIndex: index === currentImageIndex ? 1 : 0 }}
+                        />
+                    ))}
+                </Link>
 
                 {/* Navigation Buttons */}
                 {images.length > 1 && (
@@ -140,7 +145,9 @@ const PropertyCard = ({ property }) => {
                                 </div>
                             </div>
 
-                            <h3 className="text-xl font-bold text-slate-800 group-hover:text-violet-600 transition-colors mb-2">{title}</h3>
+                            <Link to={`/property/${id}`} className="hover:underline">
+                                <h3 className="text-xl font-bold text-slate-800 group-hover:text-violet-600 transition-colors mb-2">{title}</h3>
+                            </Link>
 
                             {/* Price & Valuation */}
                             <div className="flex flex-col gap-1 mb-3">
@@ -222,7 +229,7 @@ const PropertyCard = ({ property }) => {
                 <div className="border-t border-slate-100 pt-3 flex flex-col xl:flex-row justify-between items-center gap-3 mt-auto">
                     {/* Agent Info */}
                     <div className="flex items-center gap-2 w-full xl:w-auto">
-                        <img src="https://i.pravatar.cc/150?img=12" alt="Agent" className="w-8 h-8 rounded-full" />
+                        <img src="https://i.pravatar.cc/150?img=12" alt="Agent" loading="lazy" className="w-8 h-8 rounded-full" />
                         <div className="flex-col">
                             <p className="text-sm font-semibold text-slate-700">Ralph Edwards</p>
                             <p className="text-xs text-slate-500">Property Agent</p>

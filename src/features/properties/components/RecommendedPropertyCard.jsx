@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { BadgeCheck, Clock, MapPin, Bed, Bath, Square, Heart, Phone, Mail, ChevronLeft, ChevronRight, Download, CheckCircle2, Bookmark, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const BoostedPropertyCard = ({ property }) => {
+const RecommendedPropertyCard = ({ property }) => {
     const {
+        id,
         images,
         price,
         valuation,
@@ -47,7 +49,7 @@ const BoostedPropertyCard = ({ property }) => {
 
     return (
         <div
-            className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-violet-100/50 hover:border-violet-500 transition-all duration-300 border border-slate-100 group flex flex-col h-full w-full"
+            className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-violet-100/50 hover:border-violet-500 transition-all duration-300 border border-slate-100 group flex flex-col h-full w-full min-w-[320px]"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => {
                 setIsHovered(false);
@@ -55,19 +57,21 @@ const BoostedPropertyCard = ({ property }) => {
             }}
         >
             {/* Image Container */}
-            <div className="relative overflow-hidden flex-shrink-0 bg-slate-200 w-full h-72">
-                {/* Images with Fade & Zoom Effect */}
-                {images.map((img, index) => (
-                    <img
-                        key={index}
-                        src={img}
-                        alt={`${title} - View ${index + 1}`}
-                        loading="lazy"
-                        className={`w-full h-full object-cover absolute top-0 left-0 transition-all duration-700 ease-in-out group-hover:scale-105 ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-                            }`}
-                        style={{ zIndex: index === currentImageIndex ? 1 : 0 }}
-                    />
-                ))}
+            <div className="relative overflow-hidden flex-shrink-0 bg-slate-200 w-full h-56">
+                <Link to={`/property/${id}`}>
+                    {/* Images with Fade & Zoom Effect */}
+                    {images.map((img, index) => (
+                        <img
+                            key={index}
+                            src={img}
+                            alt={`${title} - View ${index + 1}`}
+                            loading="lazy"
+                            className={`w-full h-full object-cover absolute top-0 left-0 transition-all duration-700 ease-in-out group-hover:scale-105 ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                                }`}
+                            style={{ zIndex: index === currentImageIndex ? 1 : 0 }}
+                        />
+                    ))}
+                </Link>
 
                 {/* Navigation Buttons */}
                 {images.length > 1 && (
@@ -141,12 +145,13 @@ const BoostedPropertyCard = ({ property }) => {
                                 </div>
                             </div>
 
-                            <h3 className="text-base font-bold text-slate-800 group-hover:text-violet-600 transition-colors mb-1 truncate leading-tight">{title}</h3>
+                            <Link to={`/property/${id}`} className="hover:text-violet-600 transition-colors">
+                                <h3 className="text-base font-bold text-slate-800 group-hover:text-violet-600 transition-colors mb-1 truncate leading-tight">{title}</h3>
+                            </Link>
 
                             {/* Price & Valuation */}
                             <div className="flex flex-col gap-0.5 mb-1">
                                 <p className="text-lg font-bold text-violet-600">₹{price.toLocaleString()}</p>
-
                             </div>
                         </div>
                     </div>
@@ -176,14 +181,14 @@ const BoostedPropertyCard = ({ property }) => {
                     {features && features.length > 0 && (
                         <div className="mb-1 flex-grow overflow-hidden">
                             <div className="flex flex-wrap gap-1.5">
-                                {features.slice(0, 4).map((feature, idx) => (
+                                {features.slice(0, 3).map((feature, idx) => (
                                     <span key={idx} className="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 whitespace-nowrap">
                                         <CheckCircle2 size={10} className="text-green-500" />
                                         {feature}
                                     </span>
                                 ))}
-                                {features.length > 4 && (
-                                    <span className="text-[10px] text-slate-400 self-center pl-1">+{features.length - 4}</span>
+                                {features.length > 3 && (
+                                    <span className="text-[10px] text-slate-400 self-center pl-1">+{features.length - 3}</span>
                                 )}
                             </div>
                         </div>
@@ -225,4 +230,4 @@ const BoostedPropertyCard = ({ property }) => {
     );
 };
 
-export default BoostedPropertyCard;
+export default RecommendedPropertyCard;
