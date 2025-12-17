@@ -76,12 +76,14 @@ const Navbar = () => {
 
                     {/* Right: Actions */}
                     <div className="hidden md:flex items-center gap-4">
-                        <Button
-                            variant="ghost"
-                            className={`font-semibold text-slate-700 hover:bg-white/50 ${textClasses}`}
-                        >
-                            Login
-                        </Button>
+                        <Link to="/login">
+                            <Button
+                                variant="ghost"
+                                className={`font-semibold text-slate-700 hover:bg-white/50 ${textClasses}`}
+                            >
+                                Login
+                            </Button>
+                        </Link>
                         <Link to="/add-property">
                             <Button className={`gap-2 shadow-lg shadow-primary-600/20 `}
                             >
@@ -118,9 +120,11 @@ const Navbar = () => {
                             </Link>
                         ))}
                         <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
-                            <Button variant="outline" className="w-full justify-center">
-                                Login
-                            </Button>
+                            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Button variant="outline" className="w-full justify-center">
+                                    Login
+                                </Button>
+                            </Link>
                             <Button className="w-full justify-center gap-2">
                                 <Plus size={18} />
                                 Post Property

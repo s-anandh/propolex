@@ -1,25 +1,103 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Home } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Home, CheckCircle2 } from 'lucide-react';
 
 const LoginPage = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+    const [otpSent, setOtpSent] = useState(false);
+    const [otp, setOtp] = useState('');
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        name: ''
+        confirmPassword: '',
+        firstName: '',
+        lastName: ''
     });
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleSendOtp = () => {
+        if (!formData.email) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+        setIsLoading(true);
+        // Simulate API call
+        setTimeout(() => {
+            console.log('Sending OTP to', formData.email);
+            setOtpSent(true);
+            setIsLoading(false);
+            alert('OTP Sent! (Use 1234)');
+        }, 800);
+    };
+
+    const handleResendOtp = () => {
+        setIsLoading(true);
+        setTimeout(() => {
+            console.log('Resending OTP to', formData.email);
+            setIsLoading(false);
+            alert('OTP Resent! (Use 1234)');
+        }, 800);
+    }
+
+    const handleChangeEmail = () => {
+        setOtpSent(false);
+        setOtp('');
+        setIsEmailVerified(false);
+    }
+
+    const handleVerifyOtp = () => {
+        if (otp === '1234') {
+            setIsEmailVerified(true);
+            setOtpSent(false);
+        } else {
+            alert('Invalid OTP (Try 1234)');
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Simulate Auth
-        console.log('Auth Data:', formData);
+
+        if (isLogin) {
+            console.log('Login Data:', { email: formData.email, password: formData.password });
+            return;
+        }
+
+        // Registration Logic
+        if (!isEmailVerified) {
+            alert("Please verify your email first!");
+            return;
+        }
+
+        if (formData.password !== formData.confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        console.log('Registration Data:', formData);
+        alert('Registration Successful!');
     };
+
+    const toggleMode = () => {
+        setIsLogin(!isLogin);
+        // Reset states
+        setOtpSent(false);
+        setIsEmailVerified(false);
+        setOtp('');
+        setFormData({
+            email: '',
+            password: '',
+            confirmPassword: '',
+            firstName: '',
+            lastName: ''
+        });
+    }
 
     return (
         <div className="min-h-screen bg-white flex">
@@ -80,30 +158,15 @@ const LoginPage = () => {
                         <p className="text-slate-500">
                             {isLogin
                                 ? 'Please enter your details to sign in.'
-                                : 'Start your journey with us today.'}
+                                : isEmailVerified
+                                    ? 'Complete your profile details.'
+                                    : 'Lets start with your email.'}
                         </p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        {!isLogin && (
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-slate-700">Full Name</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                                        <UserIcon size={18} />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        placeholder="John Doe"
-                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all text-slate-800"
-                                    />
-                                </div>
-                            </div>
-                        )}
 
+                        {/* Email Field - Always visible but functionality changes based on state */}
                         <div className="space-y-1.5">
                             <label className="text-sm font-semibold text-slate-700">Email Address</label>
                             <div className="relative">
@@ -116,48 +179,173 @@ const LoginPage = () => {
                                     value={formData.email}
                                     onChange={handleChange}
                                     placeholder="name@example.com"
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all text-slate-800"
+                                    disabled={!isLogin && (otpSent || isEmailVerified)}
+                                    className={`w-full pl-10 pr-24 py-3 rounded-xl border focus:ring-2 outline-none transition-all text-slate-800 
+                                        ${isEmailVerified
+                                            ? 'bg-green-50 border-green-200 text-green-700'
+                                            : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
                                 />
-                            </div>
-                        </div>
 
-                        <div className="space-y-1.5">
-                            <div className="flex justify-between items-center">
-                                <label className="text-sm font-semibold text-slate-700">Password</label>
-                                {isLogin && (
-                                    <button type="button" className="text-xs font-medium text-violet-600 hover:text-violet-700">
-                                        Forgot Password?
-                                    </button>
+                                {/* Verify / Change Logic in Register Mode */}
+                                {!isLogin && (
+                                    <React.Fragment>
+                                        {!isEmailVerified && !otpSent && formData.email && (
+                                            <button
+                                                type="button"
+                                                onClick={handleSendOtp}
+                                                disabled={isLoading}
+                                                className="absolute right-2 top-1.5 bottom-1.5 px-3 bg-violet-100 text-violet-700 text-xs font-bold rounded-lg hover:bg-violet-200 transition-colors disabled:opacity-50"
+                                            >
+                                                {isLoading ? '...' : 'Verify'}
+                                            </button>
+                                        )}
+
+                                        {(otpSent || isEmailVerified) && (
+                                            <button
+                                                type="button"
+                                                onClick={handleChangeEmail}
+                                                className="absolute right-2 top-2 px-2 py-1 text-xs text-slate-400 hover:text-violet-600 hover:underline"
+                                            >
+                                                Change
+                                            </button>
+                                        )}
+                                    </React.Fragment>
+                                )}
+
+                                {isEmailVerified && (
+                                    <div className="absolute right-14 inset-y-0 flex items-center text-green-600 font-medium text-xs gap-1">
+                                        <CheckCircle2 size={16} /> Verified
+                                    </div>
                                 )}
                             </div>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                                    <Lock size={18} />
-                                </div>
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    placeholder="••••••••"
-                                    className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all text-slate-800"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
-                                >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
-                            </div>
                         </div>
 
-                        <button
-                            type="submit"
-                            className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-violet-200 hover:-translate-y-0.5"
-                        >
-                            {isLogin ? 'Sign In' : 'Create Account'}
-                        </button>
+                        {/* OTP Input Section */}
+                        {otpSent && !isEmailVerified && !isLogin && (
+                            <div className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-100 animate-slide-in-down">
+                                <div className="flex justify-between items-center">
+                                    <label className="text-sm font-semibold text-slate-700">Enter Verification Code</label>
+                                    <button onClick={handleResendOtp} type="button" className="text-xs text-slate-400 hover:text-violet-600 underline">
+                                        Resend Code
+                                    </button>
+                                </div>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        placeholder="Enter 4-digit OTP"
+                                        className="flex-1 px-4 py-2.5 rounded-lg border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all text-slate-800 tracking-widest text-center font-mono"
+                                        maxLength={4}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleVerifyOtp}
+                                        className="px-5 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-colors text-sm"
+                                    >
+                                        Verify
+                                    </button>
+                                </div>
+                                <p className="text-xs text-slate-500">
+                                    We sent a code to <span className="font-semibold text-slate-700">{formData.email}</span>
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Registration Details - Only shown AFTER verification */}
+                        {(!isLogin && isEmailVerified) && (
+                            <div className="space-y-4 animate-fade-in-up">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-sm font-semibold text-slate-700">First Name</label>
+                                        <input
+                                            type="text"
+                                            name="firstName"
+                                            value={formData.firstName}
+                                            onChange={handleChange}
+                                            placeholder="John"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all text-slate-800"
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-sm font-semibold text-slate-700">Last Name</label>
+                                        <input
+                                            type="text"
+                                            name="lastName"
+                                            value={formData.lastName}
+                                            onChange={handleChange}
+                                            placeholder="Doe"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all text-slate-800"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Password Fields - Show for Login OR (Register AND Verified) */}
+                        {(isLogin || isEmailVerified) && (
+                            <div className="space-y-4 animate-fade-in-up">
+                                <div className="space-y-1.5">
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-sm font-semibold text-slate-700">Password</label>
+                                        {isLogin && (
+                                            <button type="button" className="text-xs font-medium text-violet-600 hover:text-violet-700">
+                                                Forgot Password?
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                            <Lock size={18} />
+                                        </div>
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            name="password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            placeholder="••••••••"
+                                            className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all text-slate-800"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {!isLogin && (
+                                    <div className="space-y-1.5">
+                                        <label className="text-sm font-semibold text-slate-700">Confirm Password</label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                                <Lock size={18} />
+                                            </div>
+                                            <input
+                                                type={showPassword ? "text" : "password"}
+                                                name="confirmPassword"
+                                                value={formData.confirmPassword}
+                                                onChange={handleChange}
+                                                placeholder="••••••••"
+                                                className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none transition-all text-slate-800"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Submit Button - Only show when ready (Login OR Register Verified) */}
+                        {(isLogin || isEmailVerified) && (
+                            <button
+                                type="submit"
+                                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-violet-200 hover:-translate-y-0.5 animate-fade-in-up"
+                            >
+                                {isLogin ? 'Sign In' : 'Create Account'}
+                            </button>
+                        )}
                     </form>
 
                     <div className="relative">
@@ -191,7 +379,7 @@ const LoginPage = () => {
                         <p className="text-sm text-slate-600">
                             {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
                             <button
-                                onClick={() => setIsLogin(!isLogin)}
+                                onClick={toggleMode}
                                 className="text-violet-600 font-bold hover:text-violet-700 hover:underline transition-all"
                             >
                                 {isLogin ? 'Sign up for free' : 'Sign in'}
