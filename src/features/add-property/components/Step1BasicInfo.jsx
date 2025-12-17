@@ -13,15 +13,15 @@ const InputGroup = ({ label, name, value, onChange, placeholder, type = "text", 
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className={`w-full px-4 py-2.5 rounded-lg border focus:ring-2 outline-none transition-all placeholder:text-slate-400 text-slate-700 bg-white
+                className={`w-full px-4 py-2.5 rounded-lg focus:ring-2 outline-none transition-all placeholder:text-slate-400 text-slate-700 bg-white
                     ${error
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
-                        : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
+                        ? 'border-2 border-red-500 focus:border-red-500 focus:ring-red-100'
+                        : 'border border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
                 {...props}
             />
             {/* Inline Error Message (Near Input) */}
             {error && (
-                <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down absolute -bottom-5 left-0">
+                <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down">
                     {error}
                 </p>
             )}
@@ -39,10 +39,10 @@ const SelectGroup = ({ label, name, value, onChange, options, required = false, 
                 name={name}
                 value={value}
                 onChange={onChange}
-                className={`w-full px-4 py-2.5 rounded-lg border focus:ring-2 outline-none transition-all appearance-none bg-white text-slate-700 cursor-pointer
+                className={`w-full px-4 py-2.5 rounded-lg focus:ring-2 outline-none transition-all appearance-none bg-white text-slate-700 cursor-pointer
                     ${error
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
-                        : 'border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
+                        ? 'border-2 border-red-500 focus:border-red-500 focus:ring-red-100'
+                        : 'border border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
             >
                 <option value="">Select Option</option>
                 {options.map(opt => (
@@ -165,6 +165,43 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                             min="0"
                         />
                         <InputGroup
+                            label="Maintenance Charges (Monthly)"
+                            name="maintenanceCharges"
+                            value={formData.maintenanceCharges}
+                            onChange={handleChange}
+                            placeholder="Optional"
+                            type="number"
+                            min="0"
+                            error={errors.maintenanceCharges}
+                        />
+                    </div>
+
+                    {/* Security Deposit only for Rent/Lease */}
+                    {(formData.listingType === 'Rent' || formData.listingType === 'Lease') && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <InputGroup
+                                label="Security Deposit (₹)"
+                                name="securityDeposit"
+                                value={formData.securityDeposit}
+                                onChange={handleChange}
+                                placeholder="0"
+                                type="number"
+                                min="0"
+                            />
+                            <InputGroup
+                                label="Negotiated Price (₹)"
+                                name="negotiatedPrice"
+                                value={formData.negotiatedPrice}
+                                onChange={handleChange}
+                                placeholder="Optional"
+                                type="number"
+                                min="0"
+                            />
+                        </div>
+                    )}
+
+                    {formData.listingType === 'Sell' && (
+                        <InputGroup
                             label="Negotiated Price (₹)"
                             name="negotiatedPrice"
                             value={formData.negotiatedPrice}
@@ -173,7 +210,7 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                             type="number"
                             min="0"
                         />
-                    </div>
+                    )}
                 </div>
             </div>
 

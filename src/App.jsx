@@ -6,6 +6,7 @@ import HomePage from '@/pages/HomePage';
 import PropertiesPage from '@/pages/PropertiesPage';
 
 import AddPropertyPage from '@/pages/AddPropertyPage';
+import LoginPage from '@/pages/LoginPage';
 
 import { UIProvider } from '@/context/UIContext';
 import GlobalOverlay from '@/components/ui/GlobalOverlay';
@@ -21,6 +22,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/properties" element={<PropertiesPage />} />
             <Route path="/add-property" element={<AddPropertyPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </div>
         <Footer />

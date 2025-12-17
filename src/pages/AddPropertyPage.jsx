@@ -24,6 +24,8 @@ const AddPropertyPage = () => {
         possessionStatus: '',
         expectedPrice: '',
         negotiatedPrice: '',
+        maintenanceCharges: '', // New
+        securityDeposit: '', // New
         firstName: '',
         lastName: '',
         phone: '',
@@ -34,6 +36,12 @@ const AddPropertyPage = () => {
         builtUpArea: '',
         bedrooms: '',
         bathrooms: '',
+        balconies: '', // New
+        totalFloors: '', // New
+        floorNo: '', // New
+        ageOfProperty: '', // New
+        parkingCovered: '', // New
+        parkingOpen: '', // New
         facing: '',
         amenities: [],
         features: [],
@@ -45,6 +53,7 @@ const AddPropertyPage = () => {
         pincode: '',
         // Step 3
         images: [],
+        videoLink: '', // New
         ownershipDocs: [],
         additionalDocs: [],
         brochure: null
@@ -136,6 +145,10 @@ const AddPropertyPage = () => {
                 if (Number(formData.negotiatedPrice) <= 0) newErrors.negotiatedPrice = "Negotiated Price must be valid";
                 else if (Number(formData.negotiatedPrice) > Number(formData.expectedPrice)) newErrors.negotiatedPrice = "Negotiated Price cannot exceed Expected Price";
             }
+            // Maintenance Validation (Optional but must be positive if entered)
+            if (formData.maintenanceCharges && Number(formData.maintenanceCharges) < 0) {
+                newErrors.maintenanceCharges = "Must be positive";
+            }
 
             if (!formData.firstName?.trim()) newErrors.firstName = "First Name is required";
             else if (formData.firstName.length < 2) newErrors.firstName = "First Name is too short";
@@ -164,6 +177,13 @@ const AddPropertyPage = () => {
 
             if (!formData.bedrooms) newErrors.bedrooms = "Bedrooms is required";
             if (!formData.bathrooms) newErrors.bathrooms = "Bathrooms is required";
+
+            // Floor Verification
+            if (formData.floorNo && formData.totalFloors) {
+                if (Number(formData.floorNo) > Number(formData.totalFloors)) {
+                    newErrors.floorNo = "Cannot be greater than Total Floors";
+                }
+            }
 
             // Address Validation
             if (!formData.addressLine1?.trim()) newErrors.addressLine1 = "Address Line 1 is required";

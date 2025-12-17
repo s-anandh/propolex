@@ -88,6 +88,10 @@ const Step4Preview = ({ formData, onEditStep }) => {
                         <DetailRow label="Sub Category" value={formData.subCategory} required />
                         <DetailRow label="Listing Type" value={formData.listingType} required />
                         <DetailRow label="Expected Price" value={formData.expectedPrice ? `₹${formData.expectedPrice}` : ''} required />
+                        <DetailRow label="Maintenance Charges" value={formData.maintenanceCharges ? `₹${formData.maintenanceCharges}/month` : ''} />
+                        {(formData.listingType === 'Rent' || formData.listingType === 'Lease') && (
+                            <DetailRow label="Security Deposit" value={formData.securityDeposit ? `₹${formData.securityDeposit}` : ''} />
+                        )}
                         <DetailRow label="Negotiated Price" value={formData.negotiatedPrice ? `₹${formData.negotiatedPrice}` : ''} />
                     </div>
                 </div>
@@ -128,6 +132,14 @@ const Step4Preview = ({ formData, onEditStep }) => {
                         <DetailRow label="Bedrooms" value={formData.bedrooms} />
                         <DetailRow label="Bathrooms" value={formData.bathrooms} />
                         <DetailRow label="Facing" value={formData.facing} />
+                        <DetailRow label="Total Floors" value={formData.totalFloors} />
+                        <DetailRow label="Property on Floor" value={formData.floorNo} />
+                        <DetailRow label="Age of Property" value={formData.ageOfProperty} />
+                        <DetailRow label="Balconies" value={formData.balconies} />
+                        <DetailRow label="Parking" value={[
+                            formData.parkingCovered ? `${formData.parkingCovered} Covered` : null,
+                            formData.parkingOpen ? `${formData.parkingOpen} Open` : null
+                        ].filter(Boolean).join(', ')} />
 
                         {/* Custom Features */}
                         {formData.features && formData.features.length > 0 && (
