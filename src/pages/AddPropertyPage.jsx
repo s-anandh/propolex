@@ -148,13 +148,11 @@ const AddPropertyPage = () => {
                     else if (Number(formData.negotiatedPrice) > Number(formData.expectedPrice)) newErrors.negotiatedPrice = "Negotiated Price cannot exceed Expected Price";
                 }
             } else if (formData.listingType === 'Rent' || formData.listingType === 'Lease') {
-                // Security Deposit Validation (if required or optional but present)
-                // Assuming optional for now, but if present must be positive
+             
                 if (formData.securityDeposit && Number(formData.securityDeposit) < 0) {
                     newErrors.securityDeposit = "Security Deposit must be positive";
                 }
             }
-
             // Maintenance Validation (Optional but must be positive if entered)
             if (formData.maintenanceCharges && Number(formData.maintenanceCharges) < 0) {
                 newErrors.maintenanceCharges = "Must be positive";

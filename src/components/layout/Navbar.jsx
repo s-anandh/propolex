@@ -46,6 +46,14 @@ const Navbar = () => {
         ? 'text-white'
         : 'bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent';
 
+    // Mock Auth State (Set to true to show Profile instead of Login)
+    const isLoggedIn = false;
+    const user = {
+        name: "S Anandh",
+        image: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        profileScore: 85
+    };
+
     return (
         <nav className={navClasses}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,14 +84,49 @@ const Navbar = () => {
 
                     {/* Right: Actions */}
                     <div className="hidden md:flex items-center gap-4">
-                        <Link to="/login">
-                            <Button
-                                variant="ghost"
-                                className={`font-semibold text-slate-700 hover:bg-white/50 ${textClasses}`}
-                            >
-                                Login
-                            </Button>
-                        </Link>
+                        {isLoggedIn ? (
+                            <Link to="/profile" className="flex items-center gap-3 group">
+                                <div className="relative w-10 h-10">
+                                    {/* Mini Score Ring */}
+                                    <svg className="w-full h-full transform -rotate-90">
+                                        <circle
+                                            cx="20"
+                                            cy="20"
+                                            r="18"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            fill="transparent"
+                                            className="text-slate-200"
+                                        />
+                                        <circle
+                                            cx="20"
+                                            cy="20"
+                                            r="18"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            fill="transparent"
+                                            strokeDasharray={2 * Math.PI * 18}
+                                            strokeDashoffset={2 * Math.PI * 18 * (1 - user.profileScore / 100)}
+                                            className="text-violet-600"
+                                            strokeLinecap="round"
+                                        />
+                                    </svg>
+                                    <div className="absolute top-1 left-1 w-8 h-8 rounded-full overflow-hidden border border-white">
+                                        <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                                    </div>
+                                </div>
+                            </Link>
+                        ) : (
+                            <Link to="/login">
+                                <Button
+                                    variant="ghost"
+                                    className={`font-semibold text-slate-700 hover:bg-white/50 ${textClasses}`}
+                                >
+                                    Login
+                                </Button>
+                            </Link>
+                        )}
+
                         <Link to="/add-property">
                             <Button className={`gap-2 shadow-lg shadow-primary-600/20 `}
                             >
@@ -109,6 +152,20 @@ const Navbar = () => {
             {isMobileMenuOpen && (
                 <div className="md:hidden bg-white border-t border-slate-100 absolute w-full shadow-xl animate-fade-in-down rounded-b-2xl">
                     <div className="px-4 pt-2 pb-6 space-y-2">
+                        {isLoggedIn && (
+                            <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-xl mb-4 border border-slate-100">
+                                <div className="relative w-10 h-10">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden border border-white">
+                                        <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold text-slate-900">{user.name}</p>
+                                    <p className="text-xs text-violet-600 font-medium">Profile Score: {user.profileScore}%</p>
+                                </div>
+                            </Link>
+                        )}
+
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}
@@ -120,11 +177,13 @@ const Navbar = () => {
                             </Link>
                         ))}
                         <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
-                            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                                <Button variant="outline" className="w-full justify-center">
-                                    Login
-                                </Button>
-                            </Link>
+                            {!isLoggedIn && (
+                                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                                    <Button variant="outline" className="w-full justify-center">
+                                        Login
+                                    </Button>
+                                </Link>
+                            )}
                             <Button className="w-full justify-center gap-2">
                                 <Plus size={18} />
                                 Post Property

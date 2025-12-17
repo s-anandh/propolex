@@ -1,0 +1,190 @@
+import React, { useState } from 'react';
+import { Camera, Edit2, MapPin, Phone, Mail, Clock, Heart, Home, Eye } from 'lucide-react';
+import PropertyComp from '@/components/properties/PropertyComp';
+import { ALL_PROPERTIES } from '@/data/mockProperties';
+import EditProfileModal from './EditProfileModal';
+
+const UserProfilePage = () => {
+    // Mock User Data
+    const [user, setUser] = useState({
+        name: "S Anandh",
+        role: "Property Seeker",
+        email: "anandh@example.com",
+        phone: "+91 98765 43210",
+        location: "Bangalore, India",
+        image: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+        profileScore: 85 // Percentage
+    });
+
+    const [activeTab, setActiveTab] = useState('activity');
+    const [isEditing, setIsEditing] = useState(false);
+
+    const handleSaveProfile = (updatedUser) => {
+        setUser(updatedUser);
+        setIsEditing(false);
+    };
+
+    // Mock Activities
+    const recentViews = ALL_PROPERTIES.slice(0, 3);
+    const shortlisted = ALL_PROPERTIES.slice(2, 4);
+
+    return (
+        <div className="min-h-screen bg-slate-50 py-12 pt-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    {/* Left Column: Profile Card */}
+                    <div className="lg:col-span-1">
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sticky top-24">
+
+                            {/* Profile Image with Score Ring */}
+                            <div className="relative w-32 h-32 mx-auto mb-6">
+                                {/* SVG Ring */}
+                                <svg className="w-full h-full transform -rotate-90">
+                                    <circle
+                                        cx="64"
+                                        cy="64"
+                                        r="60"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                        fill="transparent"
+                                        className="text-slate-100"
+                                    />
+                                    <circle
+                                        cx="64"
+                                        cy="64"
+                                        r="60"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                        fill="transparent"
+                                        strokeDasharray={2 * Math.PI * 60}
+                                        strokeDashoffset={2 * Math.PI * 60 * (1 - user.profileScore / 100)}
+                                        className="text-violet-600 transition-all duration-1000 ease-out"
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                                {/* Image Overlay */}
+                                <div className="absolute top-1 left-1 w-[120px] h-[120px] rounded-full overflow-hidden border-2 border-white shadow-inner">
+                                    <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                                </div>
+                                {/* Score Badge */}
+                                <div className="absolute bottom-0 right-0 bg-violet-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border-2 border-white">
+                                    {user.profileScore}%
+                                </div>
+                                {/* Edit Image Button */}
+                                <button className="absolute top-0 right-0 bg-white p-1.5 rounded-full text-slate-500 hover:text-violet-600 border border-slate-200 shadow-sm transition-colors">
+                                    <Camera size={14} />
+                                </button>
+                            </div>
+
+                            <div className="text-center mb-6">
+                                <h2 className="text-xl font-bold text-slate-900">{user.name}</h2>
+                                <p className="text-sm text-slate-500 font-medium">{user.role}</p>
+                            </div>
+
+                            {/* Info List */}
+                            <div className="space-y-4 mb-6">
+                                <div className="flex items-center gap-3 text-sm text-slate-600">
+                                    <Mail size={16} className="text-slate-400" />
+                                    <span>{user.email}</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-slate-600">
+                                    <Phone size={16} className="text-slate-400" />
+                                    <span>{user.phone}</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-slate-600">
+                                    <MapPin size={16} className="text-slate-400" />
+                                    <span>{user.location}</span>
+                                </div>
+                            </div>
+
+                            {/* Edit Profile Button */}
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl transition-colors"
+                            >
+                                <Edit2 size={16} /> Edit Profile
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Activity & Dashboard */}
+                    <div className="lg:col-span-2">
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-3 gap-4 mb-8">
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center hover:border-violet-200 transition-colors">
+                                <Eye size={24} className="text-violet-600 mb-2" />
+                                <span className="text-2xl font-bold text-slate-900">{recentViews.length}</span>
+                                <span className="text-xs text-slate-500 font-medium uppercase mt-1">Recently Viewed</span>
+                            </div>
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center hover:border-red-200 transition-colors">
+                                <Heart size={24} className="text-red-500 mb-2" />
+                                <span className="text-2xl font-bold text-slate-900">{shortlisted.length}</span>
+                                <span className="text-xs text-slate-500 font-medium uppercase mt-1">Shortlisted</span>
+                            </div>
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center hover:border-blue-200 transition-colors">
+                                <Home size={24} className="text-blue-500 mb-2" />
+                                <span className="text-2xl font-bold text-slate-900">0</span>
+                                <span className="text-xs text-slate-500 font-medium uppercase mt-1">Contacted</span>
+                            </div>
+                        </div>
+
+                        {/* Tabs */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden min-h-[500px]">
+                            <div className="flex border-b border-slate-100">
+                                <button
+                                    onClick={() => setActiveTab('activity')}
+                                    className={`flex-1 py-4 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'activity' ? 'border-violet-600 text-violet-600 bg-violet-50' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+                                >
+                                    My Activity
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('shortlist')}
+                                    className={`flex-1 py-4 text-sm font-semibold border-b-2 transition-colors ${activeTab === 'shortlist' ? 'border-violet-600 text-violet-600 bg-violet-50' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+                                >
+                                    Shortlisted Properties
+                                </button>
+                            </div>
+
+                            <div className="p-6">
+                                {activeTab === 'activity' && (
+                                    <div className="space-y-6">
+                                        <h3 className="text-lg font-bold text-slate-900 mb-4">Recently Viewed</h3>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            {recentViews.map(property => (
+                                                <PropertyComp key={property.id} property={property} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'shortlist' && (
+                                    <div className="space-y-6">
+                                        <h3 className="text-lg font-bold text-slate-900 mb-4">Saved Properties</h3>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            {shortlisted.map(property => (
+                                                <PropertyComp key={property.id} property={property} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Edit Profile Modal */}
+            {isEditing && (
+                <EditProfileModal
+                    user={user}
+                    onClose={() => setIsEditing(false)}
+                    onSave={handleSaveProfile}
+                />
+            )}
+        </div>
+    );
+};
+
+export default UserProfilePage;

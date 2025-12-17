@@ -14,6 +14,7 @@ const HomePage = React.lazy(() => import('@/pages/HomePage'));
 const PropertiesPage = React.lazy(() => import('@/pages/PropertiesPage'));
 const PropertyDetailsPage = React.lazy(() => import('@/pages/PropertyDetailsPage'));
 const AddPropertyPage = React.lazy(() => import('@/pages/AddPropertyPage'));
+const UserProfilePage = React.lazy(() => import('@/pages/profile/UserProfilePage'));
 const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
 const BuyerDashboard = React.lazy(() => import('@/pages/dashboard/BuyerDashboard'));
 
@@ -30,6 +31,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/properties" element={<PropertiesPage />} />
               <Route path="/property/:id" element={<PropertyDetailsPage />} />
+              <Route path="/profile" element={<UserProfilePage />} />
               <Route path="/add-property" element={<AddPropertyPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/dashboard-buyer" element={<BuyerDashboard />} />
