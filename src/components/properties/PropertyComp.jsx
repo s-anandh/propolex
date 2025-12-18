@@ -7,8 +7,8 @@ const PropertyComp = ({ property }) => {
         <Link to={`/property/${property.id}`} className="block group">
             <div className="bg-white rounded-xl overflow-hidden border border-slate-100 hover:border-violet-100 shadow-sm hover:shadow-md transition-all duration-300 flex h-28 md:h-32">
 
-                {/* Column 1: Image (Fixed Width/Aspect) */}
-                <div className="w-1/3 md:w-2/5 relative overflow-hidden">
+                {/* Column 1: Image (Fixed Width/Aspect - Slightly landscape) */}
+                <div className="h-full w-32 md:w-40 relative overflow-hidden">
                     <img
                         src={property.images[0]}
                         alt={property.title}

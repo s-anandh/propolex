@@ -249,16 +249,40 @@ const Step1BasicInfo = ({ formData, handleChange, errors = {} }) => {
                     />
 
 
-                    <InputGroup
-                        label="Phone Number"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="+91 98765 43210"
-                        type="tel"
-                        required
-                        error={errors.phone}
-                    />
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-semibold text-slate-700">
+                            Phone Number <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative flex gap-2">
+                            <select
+                                name="countryCode"
+                                value={formData.countryCode || '+91'} // Fallback
+                                onChange={handleChange}
+                                className="w-24 px-2 py-2.5 rounded-lg border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none text-slate-700 bg-white appearance-none text-center cursor-pointer transition-all"
+                            >
+                                <option value="+91">+91 (IN)</option>
+                                <option value="+1">+1 (US)</option>
+                                <option value="+44">+44 (UK)</option>
+                                <option value="+971">+971 (UAE)</option>
+                            </select>
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                placeholder="98765 43210"
+                                className={`flex-1 px-4 py-2.5 rounded-lg focus:ring-2 outline-none transition-all placeholder:text-slate-400 text-slate-700 bg-white
+                                    ${errors.phone
+                                        ? 'border-2 border-red-500 focus:border-red-500 focus:ring-red-100'
+                                        : 'border border-slate-200 focus:border-violet-500 focus:ring-violet-100'}`}
+                            />
+                        </div>
+                        {errors.phone && (
+                            <p className="text-xs text-red-500 font-medium mt-1 animate-slide-in-down">
+                                {errors.phone}
+                            </p>
+                        )}
+                    </div>
 
                     <InputGroup
                         label="Whatsapp Number (Optional)"

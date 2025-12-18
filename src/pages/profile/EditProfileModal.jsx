@@ -11,7 +11,8 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
     const [formData, setFormData] = useState({
         name: user?.name || '',
         email: user?.email || '',
-        phone: user?.phone || '',
+        phone: user?.phone?.replace(/^\+\d+\s?/, '') || '', // Strip existing code for display
+        countryCode: user?.phone?.match(/^\+\d+/)?.[0] || '+91', // Extract code or default
         role: user?.role || '',
         image: user?.image || '',
         // Structured Address
@@ -29,8 +30,8 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
 
         // Mobile Validation (10 digits)
         const phoneRegex = /^[0-9]{10}$/;
-        // Strip non-digits for validation check if user types +91
-        const cleanPhone = formData.phone.replace(/\D/g, '').slice(-10);
+        // Strip non-digits for validation check
+        const cleanPhone = formData.phone.replace(/\D/g, '');
 
         if (!formData.phone) newErrors.phone = "Phone number is required";
         else if (!phoneRegex.test(cleanPhone)) newErrors.phone = "Invalid valid 10-digit mobile number";
@@ -73,13 +74,14 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
         if (validate()) {
             // Combine address back to legacy 'location' string for parent compatibility
             // But also pass full object if needed later
-            const fullLocation = `${formData.city}, ${formData.state} `; // Simple display string
-            const fullAddress = `${formData.address}, ${formData.city}, ${formData.state} - ${formData.pincode} `;
+            const fullLocation = `${formData.city}, ${formData.state}`; // Simple display string
+            const fullAddress = `${formData.address}, ${formData.city}, ${formData.state} - ${formData.pincode}`;
+            const fullPhone = `${formData.countryCode} ${formData.phone}`;
 
             onSave({
                 ...user,
                 name: formData.name,
-                phone: formData.phone,
+                phone: fullPhone,
                 location: fullLocation, // Keeping the short "Bangalore, India" format for the card display
                 image: formData.image,
                 fullAddress: fullAddress // Storing full details
@@ -151,14 +153,28 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
 
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Mobile Number</label>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    placeholder="Enter 10-digit number"
-                                    className={`w-full px-4 py-2 rounded-xl border ${errors.phone ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-violet-500'} outline-none transition-all`}
-                                />
+                                <div className="flex gap-2">
+                                    <select
+                                        name="countryCode"
+                                        value={formData.countryCode || '+91'}
+                                        onChange={handleChange}
+                                        className="w-24 px-2 py-2 rounded-xl border border-slate-200 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none text-slate-700 font-medium transition-all bg-slate-50 focus:bg-white appearance-none text-center"
+                                    >
+                                        <option value="+91">+91 (IN)</option>
+                                        <option value="+1">+1 (US)</option>
+                                        <option value="+44">+44 (UK)</option>
+                                        <option value="+971">+971 (UAE)</option>
+                                    </select>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        maxLength="10" // Assuming 10-digit local number for validation
+                                        placeholder="98765 43210"
+                                        className={`flex-1 px-4 py-2 rounded-xl border ${errors.phone ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-violet-500'} outline-none transition-all`}
+                                    />
+                                </div>
                                 {errors.phone && <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.phone}</p>}
                             </div>
 

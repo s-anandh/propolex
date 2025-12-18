@@ -28,6 +28,7 @@ const AddPropertyPage = () => {
         securityDeposit: '', // New
         firstName: '',
         lastName: '',
+        countryCode: '+91', // Added default
         phone: '',
         whatsapp: '',
         email: '',
@@ -148,7 +149,7 @@ const AddPropertyPage = () => {
                     else if (Number(formData.negotiatedPrice) > Number(formData.expectedPrice)) newErrors.negotiatedPrice = "Negotiated Price cannot exceed Expected Price";
                 }
             } else if (formData.listingType === 'Rent' || formData.listingType === 'Lease') {
-             
+
                 if (formData.securityDeposit && Number(formData.securityDeposit) < 0) {
                     newErrors.securityDeposit = "Security Deposit must be positive";
                 }
@@ -163,10 +164,10 @@ const AddPropertyPage = () => {
 
             if (!formData.lastName?.trim()) newErrors.lastName = "Last Name is required";
 
-            // Phone Regex: Starts with optional +91, then 6-9 followed by 9 digits
-            const phoneRegex = /^(\+91[\-\s]?)?[6-9]\d{9}$/;
+            // Phone Regex: Strict 10 digits (Country Code is separate)
+            const phoneRegex = /^[0-9]{10}$/;
             if (!formData.phone) newErrors.phone = "Phone Number is required";
-            else if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) newErrors.phone = "Invalid Indian Phone Number (10 digits)";
+            else if (!phoneRegex.test(formData.phone.replace(/\D/g, ''))) newErrors.phone = "Invalid Phone Number (10 digits)";
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!formData.email) newErrors.email = "Email Address is required";
